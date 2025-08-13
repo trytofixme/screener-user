@@ -1,0 +1,109 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: user
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      ttl:
+        event: 1800
+        user: 1800
+
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    topic:
+      event:
+        name: event_topic
+        partitions: 1
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: info
+
+services:
+  project-service:
+    host: localhost
+    port: 8082
+
+  payment-service:
+    host: localhost
+    port: 9080
+
+  dice-bear:
+    url: https://api.dicebear.com
+    version: 9.x
+
+  s3:
+    host: localhost
+    post: 9000
+    accessKey: user
+    secretKey: password
+    bucketName: corpbucket
+
+executors:
+  add-event-in-redis:
+    core-pool-size: 1
+    max-pool-size: 10
+    queue-capacity: 100
+    thread-name-prefix: RedisEventExecutor-
+
+  add-user-in-redis:
+    core-pool-size: 1
+    max-pool-size: 10
+    queue-capacity: 100
+    thread-name-prefix: RedisUserExecutor-
+
+  get-user-in-redis:
+    core-pool-size: 1
+    max-pool-size: 10
+    queue-capacity: 100
+    thread-name-prefix: DecrementCountViewExecutor-
+
+  get-event-in-redis:
+    core-pool-size: 1
+    max-pool-size: 10
+    queue-capacity: 100
+    thread-name-prefix: DecrementCountViewExecutor-
+
+  decrement-count-view:
+    core-pool-size: 1
+    max-pool-size: 10
+    queue-capacity: 100
+    thread-name-prefix: DecrementCountViewExecutor-
+
+  kafka-message:
+    core-pool-size: 1
+    max-pool-size: 10
+    queue-capacity: 100
+    thread-name-prefix: KafkaMessageExecutor-
+
+jobs:
+  promotion:
+    close:
+      view:
+        cron: "*/15 * * * * *"
+          # Каждые 15 секунд
+      time:
+        cron: "*/15 * * * * *"
+        # Каждые 15 секунд
