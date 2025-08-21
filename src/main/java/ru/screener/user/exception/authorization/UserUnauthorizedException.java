@@ -1,7 +1,0 @@
-package ru.screener.user.exception.authorization;
-
-public class UserUnauthorizedException extends RuntimeException {
-    public UserUnauthorizedException(String msg) {
-        super(msg);
-    }
-}
