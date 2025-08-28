@@ -1,16 +1,19 @@
-package ru.screener.user.entity;
+package ru.screener.user.entity.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -21,24 +24,25 @@ import java.util.UUID;
 @Table(name = "app_user")
 public class AppUser {
 
-    @Id @UuidGenerator
+    @Id
+    @UuidGenerator
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "tg_user_id", nullable = false, unique = true)
     private Long tgUserId;
-    @Column(nullable = false)
+    @Column(name = "chat_id", nullable = false)
     private Long chatId;
 
     private String username;
+    @Column(name = "first_name")
     private String firstName;
+    @Column(name = "last_name")
     private String lastName;
 
-    private Instant subscriptionUntil;
-
-    @Column(nullable = false)
-    private Instant createdAt;
-    @Column(nullable = false)
-    private Instant updatedAt;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }
 
 

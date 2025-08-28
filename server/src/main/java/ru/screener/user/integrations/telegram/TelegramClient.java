@@ -7,9 +7,9 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-import ru.screener.user.model.dto.AnswerCallbackQueryRequest;
-import ru.screener.user.model.dto.EditMessageTextRequest;
-import ru.screener.user.model.dto.SendMessageRequest;
+import ru.screener.user.integrations.telegram.request.AnswerCallbackQueryRequest;
+import ru.screener.user.integrations.telegram.request.EditMessageTextRequest;
+import ru.screener.user.integrations.telegram.request.SendMessageRequest;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j

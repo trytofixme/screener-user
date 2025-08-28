@@ -34,6 +34,7 @@ public class TelegramSecretFilter extends OncePerRequestFilter {
             response.getWriter().write("forbidden");
             return;
         }
+
         filterChain.doFilter(request, response);
     }
 }

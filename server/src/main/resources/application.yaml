@@ -27,3 +27,9 @@ telegram:
   bot-token: 8410759213:AAHBi8RHG3tDwlNylQI1V-6krT43YdIOa3Y
   api-base-url: https://api.telegram.org
   webhook-secret: secret
+  timeout-ms: 15000
+
+rate:
+  per-chat-per-second: 1
+  per-group-per-minute: 20
+  global-per-second: 30

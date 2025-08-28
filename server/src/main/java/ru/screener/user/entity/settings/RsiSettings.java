@@ -1,0 +1,58 @@
+package ru.screener.user.entity.settings;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
+import ru.screener.user.entity.user.AppUser;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = "user")
+@Entity
+@Table(name = "rsi_settings")
+public class RsiSettings {
+
+    @Id
+    @UuidGenerator
+    private UUID id;
+
+    @OneToOne(optional = false)
+    @JoinColumn(name = "user_id", unique = true)
+    private AppUser user;
+
+    @Column(name = "short_time_frame")
+    @Enumerated(EnumType.STRING)
+    private TimeFrame shortTimeFrame = TimeFrame.FIFTEEN_MINUTES;
+    @Column(name = "long_time_frame")
+    @Enumerated(EnumType.STRING)
+    private TimeFrame longTimeFrame = TimeFrame.FIFTEEN_MINUTES;
+
+    @Column(name = "short_rsi")
+    private Integer shortRsi = 80;
+    @Column(name = "long_rsi")
+    private Integer longRsi = 20;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+}
