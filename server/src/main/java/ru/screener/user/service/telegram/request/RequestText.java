@@ -1,4 +1,4 @@
-package ru.screener.user.helpers;
+package ru.screener.user.service.telegram.request;
 
 public class RequestText {
 

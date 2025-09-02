@@ -1,4 +1,4 @@
-package ru.screener.user.helpers;
+package ru.screener.user.service.telegram.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import ru.screener.user.entity.settings.RsiSettings;
 import ru.screener.user.entity.user.AppUser;
 import ru.screener.user.integrations.telegram.request.SendMessageRequest;
 import ru.screener.user.service.settings.RsiSettingsService;
-import ru.screener.user.ui.Keyboards;
+import ru.screener.user.utils.keyboard.Keyboards;
 
 @Slf4j
 @Service

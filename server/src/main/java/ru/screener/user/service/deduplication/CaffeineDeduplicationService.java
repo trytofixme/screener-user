@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 
@@ -17,11 +18,12 @@ public class CaffeineDeduplicationService implements DeduplicationService {
             .build();
 
     @Override
-    public boolean firstTime(Long updateId) {
+    public Mono<Boolean> firstTime(Long updateId) {
         if (updateId == null) {
-            return true;
+            return Mono.just(true);
         }
 
-        return messagesCache.asMap().putIfAbsent(updateId, Boolean.TRUE) == null;
+        boolean firstSeen = messagesCache.asMap().putIfAbsent(updateId, Boolean.TRUE) == null;
+        return Mono.just(firstSeen);
     }
 }

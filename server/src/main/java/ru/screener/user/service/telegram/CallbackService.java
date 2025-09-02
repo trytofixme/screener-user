@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
-import ru.screener.user.helpers.RequestBuilder;
 import ru.screener.user.integrations.telegram.TelegramClient;
 import ru.screener.user.dto.telegram.CallbackQuery;
+import ru.screener.user.service.telegram.request.RequestBuilder;
 
 @Slf4j
 @Service

@@ -1,4 +1,4 @@
-package ru.screener.user.ui;
+package ru.screener.user.utils.keyboard;
 
 public class KeyboardButtons {
 

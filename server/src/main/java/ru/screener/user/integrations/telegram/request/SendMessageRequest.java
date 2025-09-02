@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import ru.screener.user.dto.keyboard.Keyboard;
 
 import java.io.Serializable;
-import java.util.Map;
 
 @Data
 @Accessors(chain = true)
@@ -20,7 +20,7 @@ public class SendMessageRequest implements Serializable {
     private String text;
 
     @JsonProperty("reply_markup")
-    private Map<String, Object> replyMarkup;
+    private Keyboard replyMarkup;
 
     @JsonProperty("parse_mode")
     private String parseMode = "Markdown";

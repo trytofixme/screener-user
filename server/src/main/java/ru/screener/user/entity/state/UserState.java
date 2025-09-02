@@ -1,4 +1,4 @@
-package ru.screener.user.entity.user;
+package ru.screener.user.entity.state;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,6 +17,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
+import ru.screener.user.entity.user.AppUser;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

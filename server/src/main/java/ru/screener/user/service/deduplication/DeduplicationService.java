@@ -1,6 +1,8 @@
 package ru.screener.user.service.deduplication;
 
+import reactor.core.publisher.Mono;
+
 public interface DeduplicationService {
 
-    boolean firstTime(Long updateId);
+    Mono<Boolean> firstTime(Long updateId);
 }

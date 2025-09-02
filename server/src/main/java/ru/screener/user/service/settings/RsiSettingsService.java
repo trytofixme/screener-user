@@ -15,6 +15,9 @@ import ru.screener.user.repository.settings.RsiSettingsRepository;
 @RequiredArgsConstructor
 public class RsiSettingsService {
 
+    private static final double RSI_MIN = 0.0;
+    private static final double RSI_MAX = 100.0;
+
     private final RsiSettingsRepository repository;
 
     @Transactional
@@ -44,19 +47,34 @@ public class RsiSettingsService {
     }
 
     @Transactional
-    public void updateRsiValues(AppUser user, Integer shortRsi, Integer longRsi) {
+    public void updateShortRsi(AppUser user, Integer shortRsi) {
+        validateRsi(shortRsi);
+
         RsiSettings settings = repository.findByUser(user)
                 .orElseThrow(RsiSettingsNotFoundException::new);
 
-        if (shortRsi != null) {
-            settings.setShortRsi(shortRsi);
-        }
-
-        if (longRsi != null) {
-            settings.setLongRsi(longRsi);
-        }
+        settings.setShortRsi(shortRsi);
 
         RsiSettings updatedSettings = repository.save(settings);
         log.info("{}", updatedSettings);
+    }
+
+    @Transactional
+    public void updateLongRsi(AppUser user, Integer longRsi) {
+        validateRsi(longRsi);
+
+        RsiSettings settings = repository.findByUser(user)
+                .orElseThrow(RsiSettingsNotFoundException::new);
+
+        settings.setLongRsi(longRsi);
+
+        RsiSettings updatedSettings = repository.save(settings);
+        log.info("{}", updatedSettings);
+    }
+
+    private void validateRsi(Integer rsiValue) {
+        if (rsiValue == null || rsiValue < RSI_MIN || rsiValue > RSI_MAX) {
+            throw new IllegalArgumentException("Значение RSI может быть от 0 до 100");
+        }
     }
 }

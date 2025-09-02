@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.screener.user.entity.user.State;
-import ru.screener.user.entity.user.UserState;
+import ru.screener.user.entity.state.State;
+import ru.screener.user.entity.state.UserState;
 import ru.screener.user.entity.user.AppUser;
 import ru.screener.user.repository.user.UserStateRepository;
 
