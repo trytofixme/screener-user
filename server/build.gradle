@@ -16,6 +16,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     implementation("org.liquibase:liquibase-core")
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
