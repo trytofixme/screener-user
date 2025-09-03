@@ -19,6 +19,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import ru.screener.user.entity.user.AppUser;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -41,15 +42,15 @@ public class RsiSettings {
 
     @Column(name = "short_time_frame")
     @Enumerated(EnumType.STRING)
-    private TimeFrame shortTimeFrame = TimeFrame.FIFTEEN_MINUTES;
+    private TimeFrame shortTimeFrame;
     @Column(name = "long_time_frame")
     @Enumerated(EnumType.STRING)
-    private TimeFrame longTimeFrame = TimeFrame.FIFTEEN_MINUTES;
+    private TimeFrame longTimeFrame;
 
-    @Column(name = "short_rsi")
-    private Integer shortRsi = 80;
-    @Column(name = "long_rsi")
-    private Integer longRsi = 20;
+    @Column(name = "short_rsi", precision = 10, scale = 5)
+    private BigDecimal shortRsi;
+    @Column(name = "long_rsi", precision = 10, scale = 5)
+    private BigDecimal longRsi;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)

@@ -35,7 +35,7 @@ public class RequestBuilder {
     }
 
     public SendMessageRequest getSettingsRequest(AppUser user) {
-        RsiSettings settings = rsiSettingsService.getSettingsByUser(user);
+        RsiSettings settings = rsiSettingsService.getOrCreateSettings(user);
         String messageText = String.format(
             """
             %s
@@ -57,7 +57,7 @@ public class RequestBuilder {
     }
 
     public SendMessageRequest getSettingsUpdatedRequest(AppUser user) {
-        RsiSettings settings = rsiSettingsService.getSettingsByUser(user);
+        RsiSettings settings = rsiSettingsService.getOrCreateSettings(user);
         String messageText = String.format(
                 """
                 %s

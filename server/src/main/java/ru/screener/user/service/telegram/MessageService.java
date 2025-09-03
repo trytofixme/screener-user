@@ -18,6 +18,8 @@ import ru.screener.user.service.user.UserService;
 import ru.screener.user.service.user.UserStateService;
 import ru.screener.user.utils.keyboard.KeyboardButtons;
 
+import java.math.BigDecimal;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -108,7 +110,7 @@ public class MessageService {
                 }
             }
             if (state.name().contains(RSI_STRING)) {
-                final int rsiValue = Integer.parseInt(messageText);
+                final BigDecimal rsiValue = new BigDecimal(messageText);
                 switch (state) {
                     case WAIT_RSI_SHORT -> rsiSettingsService.updateShortRsi(user, rsiValue);
                     case WAIT_RSI_LONG -> rsiSettingsService.updateLongRsi(user, rsiValue);

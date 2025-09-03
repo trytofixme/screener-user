@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS rsi_settings (
     user_id UUID NOT NULL UNIQUE REFERENCES app_user(id) ON DELETE CASCADE,
     short_time_frame VARCHAR(16),
     long_time_frame VARCHAR(16),
-    short_rsi INT,
-    long_rsi INT,
+    short_rsi NUMERIC,
+    long_rsi NUMERIC,
     updated_at TIMESTAMPTZ NOT NULL
 
     CONSTRAINT chk_short_time_frame
