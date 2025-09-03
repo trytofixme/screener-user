@@ -1,0 +1,50 @@
+spring:
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+    properties:
+      client.dns.lookup: use_all_dns_ips
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: user
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+app:
+  kafka:
+    topic:
+      user:
+        name: settings.rsi
+        partitions: 1
+server:
+  port: 8080
+
+logging:
+  level:
+    root: info
+
+telegram:
+  bot-token: 8410759213:AAHBi8RHG3tDwlNylQI1V-6krT43YdIOa3Y
+  api-base-url: https://api.telegram.org
+  webhook-secret: secret
+  timeout-ms: 15000
+
+rate:
+  per-chat-per-second: 1
+  per-group-per-minute: 20
+  global-per-second: 30
