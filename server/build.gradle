@@ -40,6 +40,7 @@ dependencies {
 bootJar {
     enabled = true
     archiveClassifier = ''
+    archiveFileName = 'server.jar'
     destinationDirectory.set(file("${rootProject.buildDir}/libs"))
     archiveBaseName.set("${rootProject.name}")
 }
