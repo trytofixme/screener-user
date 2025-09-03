@@ -2,11 +2,9 @@
 FROM eclipse-temurin:21-jdk-jammy AS build
 WORKDIR /app
 
-COPY gradlew gradle/ ./
-RUN chmod +x gradlew
-COPY settings.gradle* build.gradle* gradle.properties* ./
-
 COPY . .
+
+RUN chmod +x gradlew
 
 RUN --mount=type=cache,target=/root/.gradle \
     ./gradlew --no-daemon :server:clean :server:bootJar -x test
