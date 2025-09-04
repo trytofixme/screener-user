@@ -66,12 +66,19 @@ management:
     health:
       probes:
         enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db
   endpoints:
     web:
       base-path: /actuator
       exposure:
         include: health,info,metrics,prometheus
-
+  health:
+    kafka:
+      enabled: false
 ---
 spring:
   config:
