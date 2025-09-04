@@ -13,6 +13,8 @@ import ru.screener.user.dto.telegram.TelegramUpdate;
 import ru.screener.user.service.deduplication.DeduplicationService;
 import ru.screener.user.utils.telegram.TelegramUpdateUtils;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -30,13 +32,14 @@ public class ReactiveRequestDispatcher {
     @PostConstruct
     public void init() {
         this.subscription = sink.asFlux()
+                .filter(Objects::nonNull)
                 .filterWhen(telegramUpdate -> deduplicationService.firstTime(telegramUpdate.getUpdateId()))
                 .groupBy(TelegramUpdateUtils::extractChatKey)
                 .flatMap(group -> group
                         .concatMap(this::routeMono)
                         .onErrorContinue((ex, val) -> {
                             var update = (TelegramUpdate) val;
-                            log.error("Update handling failed id={}", update.getUpdateId(), ex);
+                            log.error("Update handling failed", ex);
                         })
                 )
                 .subscribe(
