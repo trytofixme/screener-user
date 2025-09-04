@@ -16,12 +16,20 @@ public class RsiSettingsPublisher {
     private final KafkaRsiSettingsTopicProperties topicProperties;
 
     public void sendMessage(RsiSettingsDto rsiSettingsDto) {
-        kafkaTemplate.send(topicProperties.getName(), rsiSettingsDto).thenAccept(arg ->
-                        log.info("Rsi settings event {} sent to Kafka topic {}", rsiSettingsDto, topicProperties.getName()))
-        .exceptionally(ex -> {
-            log.error("Failed to send rsi settings event to Kafka topic '{}'. Error: {}",
-            topicProperties.getName(), ex.getMessage());
-            return null;
-        });
+        String key = String.valueOf(rsiSettingsDto.getTelegramId());
+
+        kafkaTemplate.send(topicProperties.getName(), key, rsiSettingsDto)
+                .thenAccept(result -> log.info(
+                        "Rsi settings event {} sent to Kafka topic {} partition {} offset {}",
+                        rsiSettingsDto,
+                        topicProperties.getName(),
+                        result.getRecordMetadata().partition(),
+                        result.getRecordMetadata().offset()
+                ))
+                .exceptionally(ex -> {
+                    log.error("Failed to send rsi settings event to Kafka topic '{}'. Error: {}",
+                            topicProperties.getName(), ex.getMessage(), ex);
+                    return null;
+                });
     }
 }
