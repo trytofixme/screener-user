@@ -35,32 +35,38 @@ public class MessageService {
     private final TelegramClient telegramClient;
 
     public void handleMessage(Message message) {
-        final From from = message.getFrom();
-        final Chat chat = message.getChat();
-        final String messageText = message.getText();
+        try {
+            final From from = message.getFrom();
+            final Chat chat = message.getChat();
+            final String messageText = message.getText();
 
-        if (messageText == null) {
-            return;
+            if (messageText == null) {
+                return;
+            }
+
+            final AppUser user = userService.upsertFromTelegram(
+                    from.getId(),
+                    chat.getId(),
+                    from.getUsername(),
+                    from.getFirstName(),
+                    from.getLastName()
+            );
+            final State state = userStateService.getState(user);
+
+            final SendMessageRequest request = resolveMessageRequest(messageText, user);
+
+            // Если статус не пустой, значит предыдущая команда была на изменение настроек
+            if (state != State.NONE) {
+                tryApplyNumericInput(user, state, messageText);
+                return;
+            }
+
+            telegramClient.sendMessage(request);
+            log.info("Sent message to chat {}", user.getChatId());
+        } catch (Exception e) {
+            log.error("Failed to handle update for user {}: {}", message.getFrom().getUsername(), e.toString());
         }
 
-        final AppUser user = userService.upsertFromTelegram(
-                from.getId(),
-                chat.getId(),
-                from.getUsername(),
-                from.getFirstName(),
-                from.getLastName()
-        );
-        final State state = userStateService.getState(user);
-
-        final SendMessageRequest request = resolveMessageRequest(messageText, user);
-
-        // Если статус не пустой, значит предыдущая команда была на изменение настроек
-        if (state != State.NONE) {
-            tryApplyNumericInput(user, state, messageText);
-            return;
-        }
-
-        telegramClient.sendMessage(request);
     }
 
     private SendMessageRequest resolveMessageRequest(String messageText, AppUser user) {

@@ -41,13 +41,13 @@ public class RequestBuilder {
             %s
             %s
             
-            🔴 Шорт: RSI > %.2f за %s;
-            🟢 Лонг: RSI < %.2f за %s.
+            🔴 Шорт: RSI > %s за %s;
+            🟢 Лонг: RSI < %s за %s.
             """,
             RequestText.RSI_HELP_MESSAGE,
             RequestText.CURRENT_SETTINGS_MESSAGE,
-            settings.getShortRsi().doubleValue(), settings.getShortTimeFrame().getTranslation(),
-            settings.getLongRsi().doubleValue(), settings.getLongTimeFrame().getTranslation()
+            settings.getShortRsi(), settings.getShortTimeFrame().getTranslation(),
+            settings.getLongRsi(), settings.getLongTimeFrame().getTranslation()
         );
 
         return new SendMessageRequest()
@@ -62,12 +62,12 @@ public class RequestBuilder {
                 """
                 %s
                 
-                🔴 Шорт: RSI > %.2f за %s;
-                🟢 Лонг: RSI < %.2f за %s.
+                🔴 Шорт: RSI > %s за %s;
+                🟢 Лонг: RSI < %s за %s.
                 """,
                 RequestText.AFTER_UPDATE_SETTINGS_MESSAGE,
-                settings.getShortRsi().doubleValue(), settings.getShortTimeFrame().getTranslation(),
-                settings.getLongRsi().doubleValue(), settings.getLongTimeFrame().getTranslation()
+                settings.getShortRsi(), settings.getShortTimeFrame().getTranslation(),
+                settings.getLongRsi(), settings.getLongTimeFrame().getTranslation()
         );
 
         return new SendMessageRequest()
