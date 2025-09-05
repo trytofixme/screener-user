@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.screener.user.integrations.telegram.TelegramClient;
 import ru.screener.user.dto.telegram.CallbackQuery;
 import ru.screener.user.service.telegram.request.RequestBuilder;
@@ -16,7 +17,7 @@ public class CallbackService {
     private final RequestBuilder messageBuilder;
     private final TelegramClient telegramClient;
 
-    public void handleCallback(CallbackQuery callbackQuery) {
+    public Mono<Void> handleCallback(CallbackQuery callbackQuery) {
         throw new NotImplementedException();
     }
 
