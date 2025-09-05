@@ -85,6 +85,7 @@ public class MessageService {
     private SendMessageRequest resolveMessageRequest(String messageText, AppUser user) {
         switch (messageText) {
             case KeyboardButtons.START_COMMAND -> {
+                userStateService.setState(user, State.NONE);
                 return requestBuilder.getStartRequest(user);
             }
             case KeyboardButtons.BACK_TO_MENU_COMMAND -> {
