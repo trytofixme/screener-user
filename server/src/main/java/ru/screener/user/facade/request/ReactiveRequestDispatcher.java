@@ -6,19 +6,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.Disposable;
+import reactor.core.publisher.BufferOverflowStrategy;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
-import reactor.core.scheduler.Schedulers;
 import ru.screener.user.dto.telegram.TelegramUpdate;
 import ru.screener.user.service.deduplication.DeduplicationService;
 import ru.screener.user.utils.telegram.TelegramUpdateUtils;
 
+import java.time.Duration;
 import java.util.Objects;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReactiveRequestDispatcher {
+
+    private static final Duration PER_UPDATE_TIMEOUT = Duration.ofSeconds(7);
 
     private final RequestRouter requestRouter;
     private final DeduplicationService deduplicationService;
@@ -33,20 +36,24 @@ public class ReactiveRequestDispatcher {
     public void init() {
         this.subscription = sink.asFlux()
                 .filter(Objects::nonNull)
-                .filterWhen(telegramUpdate -> deduplicationService.firstTime(telegramUpdate.getUpdateId()))
-                .groupBy(TelegramUpdateUtils::extractChatKey)
+                .onBackpressureBuffer(10_000,
+                        d -> log.warn("Backpressure: dropped update {}", d),
+                        BufferOverflowStrategy.DROP_OLDEST)
+                .filterWhen(upd -> deduplicationService.firstTime(upd.getUpdateId())
+                        .timeout(Duration.ofSeconds(2))
+                        .onErrorReturn(false))
+                .groupBy(TelegramUpdateUtils::extractChatKey, 1)
                 .flatMap(group -> group
-                        .concatMap(this::routeMono)
-                        .onErrorContinue((ex, val) -> {
-                            var update = (TelegramUpdate) val;
-                            log.error("Update handling failed", ex);
-                        })
-                )
+                                .concatMap(this::routeMono)
+                                .name("chat-" + group.key())
+                                .tag("chat", group.key())
+                        , 50)
                 .subscribe(
                         ok -> {},
                         ex -> log.error("Dispatcher stream failed", ex),
                         () -> log.warn("Dispatcher stream completed")
                 );
+
     }
 
     @PreDestroy
@@ -65,9 +72,12 @@ public class ReactiveRequestDispatcher {
         return Mono.empty();
     }
 
-    private Mono<Void> routeMono(TelegramUpdate telegramUpdate) {
-        return Mono.fromRunnable(() -> requestRouter.route(telegramUpdate))
-                .subscribeOn(Schedulers.boundedElastic())
-                .then();
+    private Mono<Void> routeMono(TelegramUpdate u) {
+        return Mono.defer(() -> requestRouter.route(u))
+                .timeout(PER_UPDATE_TIMEOUT)
+                .onErrorResume(ex -> {
+                    log.warn("Update {} handling failed: {}", u.getUpdateId(), ex.toString(), ex);
+                    return Mono.empty();
+                });
     }
 }

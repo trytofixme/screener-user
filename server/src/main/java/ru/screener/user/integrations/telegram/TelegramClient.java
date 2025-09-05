@@ -6,11 +6,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 import ru.screener.user.integrations.telegram.request.AnswerCallbackQueryRequest;
 import ru.screener.user.integrations.telegram.request.EditMessageTextRequest;
 import ru.screener.user.integrations.telegram.request.SendMessageRequest;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.Duration;
 
 @Slf4j
 @Component
@@ -33,19 +37,19 @@ public class TelegramClient {
         return String.format("%s/bot%s/%s", apiBase, token, method);
     }
 
-    public void sendMessage(SendMessageRequest request) {
-        webClient.post().uri(url(SEND_MESSAGE_METHOD))
+    public Mono<Void> sendMessage(SendMessageRequest request) {
+        return webClient.post().uri(url(SEND_MESSAGE_METHOD))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, resp ->
-                        resp.bodyToMono(String.class).flatMap(body -> {
-                            log.error("Telegram sendMessage error {}: {}", resp.statusCode(), body);
-                            return Mono.error(new RuntimeException("Telegram error: " + body));
-                        })
-                )
-                .bodyToMono(String.class)
-                .block();
+                .bodyToMono(Void.class)
+                .timeout(Duration.ofSeconds(6))
+                .retryWhen(Retry.backoff(3, Duration.ofMillis(300))
+                        .filter(ex -> ex instanceof WebClientRequestException))
+                .onErrorResume(ex -> {
+                    log.warn("sendMessage failed: {}", ex.toString(), ex);
+                    return Mono.empty();
+                });
     }
 
     public void answerCallback(AnswerCallbackQueryRequest request) {
