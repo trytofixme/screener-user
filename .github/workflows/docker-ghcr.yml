@@ -2,11 +2,6 @@ name: docker-ghcr
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - '**/*.java'
-      - 'build.gradle*'
-      - 'gradle/**'
-      - 'Dockerfile'
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
