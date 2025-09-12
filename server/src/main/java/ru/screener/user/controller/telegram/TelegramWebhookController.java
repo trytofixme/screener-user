@@ -21,7 +21,7 @@ public class TelegramWebhookController {
     @PostMapping("/telegram/webhook")
     @ResponseStatus(HttpStatus.OK)
     public Mono<Void> onUpdate(@RequestBody TelegramUpdate telegramUpdate) {
-        log.info("Webhook update!!!: {}", telegramUpdate);
+        log.info("Webhook update: {}", telegramUpdate);
 
         return reactiveDispatcher.enqueue(telegramUpdate);
     }

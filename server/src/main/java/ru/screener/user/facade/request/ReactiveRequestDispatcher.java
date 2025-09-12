@@ -72,11 +72,11 @@ public class ReactiveRequestDispatcher {
         return Mono.empty();
     }
 
-    private Mono<Void> routeMono(TelegramUpdate u) {
-        return Mono.defer(() -> requestRouter.route(u))
+    private Mono<Void> routeMono(TelegramUpdate telegramUpdate) {
+        return Mono.defer(() -> requestRouter.route(telegramUpdate))
                 .timeout(PER_UPDATE_TIMEOUT)
                 .onErrorResume(ex -> {
-                    log.warn("Update {} handling failed: {}", u.getUpdateId(), ex.toString(), ex);
+                    log.warn("Update {} handling failed: {}", telegramUpdate.getUpdateId(), ex.toString(), ex);
                     return Mono.empty();
                 });
     }

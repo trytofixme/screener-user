@@ -35,10 +35,12 @@ public class MessageService {
     private final RsiSettingsService rsiSettingsService;
     private final RequestBuilder requestBuilder;
     private final TelegramClient telegramClient;
+    private final CommandService commandService;
 
     public Mono<Void> handleMessage(Message message) {
         return Mono.defer(() -> {
                     final String messageText = message.getText();
+                    log.info("Handled message {}", message);
                     if (messageText == null) {
                         return Mono.empty();
                     }
@@ -49,12 +51,14 @@ public class MessageService {
                                     Mono.fromCallable(() -> userStateService.getState(user))
                                             .subscribeOn(Schedulers.boundedElastic())
                                             .flatMap(state -> {
-                                                // Если ожидаем числовой ввод — применяем и высылаем подтверждение
+                                                if (messageText.startsWith("/")) {
+                                                    commandService.handleCommand(user, messageText);
+                                                }
+
                                                 if (state != State.NONE) {
                                                     return tryApplyNumericInput(user, state, messageText);
                                                 }
 
-                                                // Иначе — обычная команда/сообщение
                                                 SendMessageRequest request = resolveMessageRequest(messageText, user);
                                                 return telegramClient.sendMessage(request)
                                                         .doOnSuccess(v -> log.info("Sent message to chat {}", user.getChatId()));
@@ -84,10 +88,6 @@ public class MessageService {
 
     private SendMessageRequest resolveMessageRequest(String messageText, AppUser user) {
         switch (messageText) {
-            case KeyboardButtons.START_COMMAND -> {
-                userStateService.setState(user, State.NONE);
-                return requestBuilder.getStartRequest(user);
-            }
             case KeyboardButtons.BACK_TO_MENU_COMMAND -> {
                 return requestBuilder.getMainMenuRequest(user);
             }
