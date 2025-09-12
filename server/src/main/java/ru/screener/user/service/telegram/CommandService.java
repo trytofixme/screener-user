@@ -21,33 +21,27 @@ public class CommandService {
     private final TelegramClient telegramClient;
     private final UserStateService userStateService;
 
-    public void handleCommand(final AppUser user, final String commandText) {
-        Mono.defer(() -> {
-                    log.info("Handled command {}", commandText);
-
+    public Mono<Void> handleCommand(final AppUser user, final String commandText) {
+        return Mono.defer(() -> {
+                    log.info("Handle command: {}", commandText);
                     SendMessageRequest request = resolveMessageRequest(commandText, user);
                     return telegramClient.sendMessage(request)
-                            .doOnSuccess(v -> log.info("Sent message to chat {}", user.getChatId()));
+                            .doOnSuccess(v -> log.info("Sent command reply to chat {}", user.getChatId()));
                 })
                 .onErrorResume(e -> {
-                    try {
-                        String username = user.getUsername() != null ? user.getUsername() : "unknown";
-                        log.error("Failed to handle update for user {}: {}", username, e.toString(), e);
-                    } catch (Exception ignore) {
-                    }
+                    String username = user.getUsername() != null ? user.getUsername() : "unknown";
+                    log.error("Failed to handle command for user {}: {}", username, e.toString(), e);
                     return Mono.empty();
                 });
     }
 
-    private SendMessageRequest resolveMessageRequest(String messageText, AppUser user) {
-        switch (messageText) {
+    private SendMessageRequest resolveMessageRequest(String commandText, AppUser user) {
+        return switch (commandText) {
             case KeyboardButtons.START_COMMAND -> {
                 userStateService.setState(user, State.NONE);
-                return requestBuilder.getStartRequest(user);
+                yield requestBuilder.getStartRequest(user);
             }
-            default -> {
-                return requestBuilder.getDefaultRequest(user);
-            }
-        }
+            default -> requestBuilder.getDefaultRequest(user);
+        };
     }
 }

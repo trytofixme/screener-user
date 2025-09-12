@@ -40,30 +40,43 @@ public class MessageService {
     public Mono<Void> handleMessage(Message message) {
         return Mono.defer(() -> {
                     final String messageText = message.getText();
-                    log.info("Handled message {}", message);
                     if (messageText == null) {
                         return Mono.empty();
                     }
 
-                    return Mono.fromCallable(() -> upsertUser(message))
+                    log.info("Handle message: chatId={}, textPreview={}",
+                            message.getChat() != null ? message.getChat().getId() : "unknown", messageText);
+
+                    // upsert user + read state
+                    return Mono.fromCallable(() -> {
+                                AppUser user = upsertUser(message);
+                                State state = userStateService.getState(user);
+                                return new UserCtx(user, state, messageText);
+                            })
                             .subscribeOn(Schedulers.boundedElastic())
-                            .flatMap(user ->
-                                    Mono.fromCallable(() -> userStateService.getState(user))
-                                            .subscribeOn(Schedulers.boundedElastic())
-                                            .flatMap(state -> {
-                                                if (messageText.startsWith("/")) {
-                                                    commandService.handleCommand(user, messageText);
-                                                }
 
-                                                if (state != State.NONE) {
-                                                    return tryApplyNumericInput(user, state, messageText);
-                                                }
+                            // Команда — short-circuit
+                            .flatMap(ctx -> {
+                                if (ctx.messageText().startsWith("/")) {
+                                    return commandService.handleCommand(ctx.user(), ctx.messageText());
+                                }
+                                return Mono.just(ctx);
+                            })
 
-                                                SendMessageRequest request = resolveMessageRequest(messageText, user);
-                                                return telegramClient.sendMessage(request)
-                                                        .doOnSuccess(v -> log.info("Sent message to chat {}", user.getChatId()));
-                                            })
-                            );
+                            // Если уже ответили командой — тут прилетит Void, пропускаем дальше
+                            .flatMap(obj -> {
+                                if (obj instanceof UserCtx ctx) {
+                                    // Есть ожидаемый ввод — применяем
+                                    if (ctx.state() != State.NONE) {
+                                        return tryApplyNumericInput(ctx.user(), ctx.state(), ctx.messageText());
+                                    }
+                                    // Обычная клавиатурная команда/текст
+                                    SendMessageRequest request = resolveMessageRequest(ctx.messageText(), ctx.user());
+                                    return telegramClient.sendMessage(request)
+                                            .doOnSuccess(v -> log.info("Sent message to chat {}", ctx.user().getChatId()));
+                                }
+                                return Mono.empty();
+                            });
                 })
                 .onErrorResume(e -> {
                     try {
@@ -78,77 +91,73 @@ public class MessageService {
         From from = Objects.requireNonNull(message.getFrom(), "from is null");
         Chat chat = Objects.requireNonNull(message.getChat(), "chat is null");
         return userService.upsertFromTelegram(
-                from.getId(),
-                chat.getId(),
-                from.getUsername(),
-                from.getFirstName(),
-                from.getLastName()
+                from.getId(), chat.getId(),
+                from.getUsername(), from.getFirstName(), from.getLastName()
         );
     }
 
     private SendMessageRequest resolveMessageRequest(String messageText, AppUser user) {
-        switch (messageText) {
-            case KeyboardButtons.BACK_TO_MENU_COMMAND -> {
-                return requestBuilder.getMainMenuRequest(user);
-            }
-            case KeyboardButtons.SETTINGS_COMMAND -> {
-                return requestBuilder.getSettingsRequest(user);
-            }
-//            case ACCESS_COMMAND -> messageBuilder.getAccessRequest(user);
-            case KeyboardButtons.PROFILE_COMMAND -> {
-                return requestBuilder.getProfileRequest(user);
-            }
+        return switch (messageText) {
+            case KeyboardButtons.BACK_TO_MENU_COMMAND -> requestBuilder.getMainMenuRequest(user);
+            case KeyboardButtons.SETTINGS_COMMAND -> requestBuilder.getSettingsRequest(user);
+            case KeyboardButtons.PROFILE_COMMAND -> requestBuilder.getProfileRequest(user);
             case KeyboardButtons.SHORT_TIME_FRAME_COMMAND -> {
                 userStateService.setState(user, State.WAIT_TIME_FRAME_SHORT);
-                return requestBuilder.getTimeFramesRequest(user);
+                yield requestBuilder.getTimeFramesRequest(user);
             }
             case KeyboardButtons.LONG_TIME_FRAME_COMMAND -> {
                 userStateService.setState(user, State.WAIT_TIME_FRAME_LONG);
-                return requestBuilder.getTimeFramesRequest(user);
+                yield requestBuilder.getTimeFramesRequest(user);
             }
             case KeyboardButtons.SHORT_RSI_VALUE_COMMAND -> {
                 userStateService.setState(user, State.WAIT_RSI_SHORT);
-                return requestBuilder.getRsiValueRequest(user);
+                yield requestBuilder.getRsiValueRequest(user);
             }
             case KeyboardButtons.LONG_RSI_VALUE_COMMAND -> {
                 userStateService.setState(user, State.WAIT_RSI_LONG);
-                return requestBuilder.getRsiValueRequest(user);
+                yield requestBuilder.getRsiValueRequest(user);
             }
-            default -> {
-                return requestBuilder.getDefaultRequest(user);
-            }
-        }
+            default -> requestBuilder.getDefaultRequest(user);
+        };
     }
 
     private Mono<Void> tryApplyNumericInput(AppUser user, State state, String messageText) {
-        return Mono.fromRunnable(() -> {
+        return Mono.fromCallable(() -> {
                     if (state.name().contains(TIME_FRAME_STRING)) {
-                        final TimeFrame timeFrame = TimeFrame.fromString(messageText);
+                        final TimeFrame tf = TimeFrame.fromString(messageText);
+                        if (tf == null) throw new IllegalArgumentException("Неверный таймфрейм");
                         switch (state) {
-                            case WAIT_TIME_FRAME_SHORT -> rsiSettingsService.updateTimeFrames(user, timeFrame, null);
-                            case WAIT_TIME_FRAME_LONG -> rsiSettingsService.updateTimeFrames(user, null, timeFrame);
-                            default -> { /* no-op */ }
+                            case WAIT_TIME_FRAME_SHORT -> rsiSettingsService.updateTimeFrames(user, tf, null);
+                            case WAIT_TIME_FRAME_LONG -> rsiSettingsService.updateTimeFrames(user, null, tf);
                         }
-                    }
-                    if (state.name().contains(RSI_STRING)) {
-                        final BigDecimal rsiValue = new BigDecimal(messageText);
+                    } else if (state.name().contains(RSI_STRING)) {
+                        final BigDecimal rsi = new BigDecimal(messageText);
+                        if (rsi.scale() > 2) throw new IllegalArgumentException("Слишком много знаков после запятой");
+                        if (rsi.compareTo(BigDecimal.ZERO) < 0 || rsi.compareTo(new BigDecimal("100")) > 0) {
+                            throw new IllegalArgumentException("RSI должен быть в диапазоне 0..100");
+                        }
                         switch (state) {
-                            case WAIT_RSI_SHORT -> rsiSettingsService.updateShortRsi(user, rsiValue);
-                            case WAIT_RSI_LONG -> rsiSettingsService.updateLongRsi(user, rsiValue);
-                            default -> { /* no-op */ }
+                            case WAIT_RSI_SHORT -> rsiSettingsService.updateShortRsi(user, rsi);
+                            case WAIT_RSI_LONG -> rsiSettingsService.updateLongRsi(user, rsi);
                         }
+                    } else {
+                        // неизвестный state — просто игнор или лог
+                        log.warn("Unexpected numeric-input state: {}", state);
                     }
                     userStateService.setState(user, State.NONE);
+                    return requestBuilder.getSettingsUpdatedRequest(user);
                 })
                 .subscribeOn(Schedulers.boundedElastic())
-                .then(Mono.fromCallable(() -> requestBuilder.getSettingsUpdatedRequest(user))
-                        .subscribeOn(Schedulers.boundedElastic())
-                        .flatMap(telegramClient::sendMessage))
+                .flatMap(telegramClient::sendMessage)
                 .onErrorResume(ex -> {
                     log.warn("Bad numeric input '{}': {}", messageText, ex.getMessage());
                     return Mono.fromCallable(() -> requestBuilder.getErrorRequest(user))
                             .subscribeOn(Schedulers.boundedElastic())
-                            .flatMap(telegramClient::sendMessage);
-                });
+                            .flatMap(telegramClient::sendMessage)
+                            .then();
+                })
+                .then();
     }
+
+    private record UserCtx(AppUser user, State state, String messageText) {}
 }
