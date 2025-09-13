@@ -30,7 +30,7 @@ app:
     topic:
       user:
         name: settings.rsi
-        partitions: 1
+        partitions: 3
 
 server:
   port: 8080
@@ -110,4 +110,4 @@ app:
     topic:
       user:
         name: settings.rsi
-        partitions: 1
+        partitions: 3
