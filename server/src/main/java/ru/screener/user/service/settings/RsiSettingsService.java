@@ -56,9 +56,8 @@ public class RsiSettingsService {
     public Flux<RsiSettingsDto> getRsiSettings() {
         return Mono.fromCallable(repository::findAll)
                 .subscribeOn(Schedulers.boundedElastic())
-                .flatMapMany(list -> Flux.fromIterable(
-                        list.stream().map(settingsMapper::toDto).toList()
-                ));
+                .flatMapIterable(list -> list)
+                .map(settingsMapper::toDto);
     }
 
     @Transactional
