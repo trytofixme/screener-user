@@ -1,4 +1,4 @@
-package ru.screener.user.dto.keyboard;
+package ru.screener.user.dto.telegram.keyboard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class Keyboard implements Serializable {
+public class KeyboardDto implements Serializable {
 
     private List<List<KeyboardButton>> keyboard;
 

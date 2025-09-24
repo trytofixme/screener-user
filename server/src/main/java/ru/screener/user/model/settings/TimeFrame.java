@@ -1,4 +1,4 @@
-package ru.screener.user.entity.settings;
+package ru.screener.user.model.settings;
 
 import lombok.Getter;
 

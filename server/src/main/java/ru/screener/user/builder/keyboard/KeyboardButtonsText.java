@@ -1,6 +1,6 @@
-package ru.screener.user.utils.keyboard;
+package ru.screener.user.builder.keyboard;
 
-public class KeyboardButtons {
+public class KeyboardButtonsText {
 
     public static final String START_COMMAND = "/start";
 

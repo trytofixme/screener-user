@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 import ru.screener.user.config.bybit.KafkaRsiSettingsTopicProperties;
 import ru.screener.user.dto.settings.RsiSettingsDto;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class RsiSettingsPublisher {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;

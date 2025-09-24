@@ -7,12 +7,12 @@ import ru.screener.user.entity.settings.RsiSettings;
 @Component
 public class RsiSettingsMapper {
 
-    public RsiSettingsDto toDto(RsiSettings s) {
+    public RsiSettingsDto toDto(RsiSettings rsiSettings) {
         return new RsiSettingsDto()
-                .setTelegramId(s.getUser().getTgUserId())
-                .setShortTimeFrame(s.getShortTimeFrame() != null ? s.getShortTimeFrame().getTranslation() : null)
-                .setLongTimeFrame(s.getLongTimeFrame() != null ? s.getLongTimeFrame().getTranslation() : null)
-                .setShortRsi(s.getShortRsi())
-                .setLongRsi(s.getLongRsi());
+                .setTelegramId(rsiSettings.getUser().getTgUserId())
+                .setShortTimeFrame(rsiSettings.getShortTimeFrame() != null ? rsiSettings.getShortTimeFrame().getTranslation() : null)
+                .setLongTimeFrame(rsiSettings.getLongTimeFrame() != null ? rsiSettings.getLongTimeFrame().getTranslation() : null)
+                .setShortRsi(rsiSettings.getShortRsi())
+                .setLongRsi(rsiSettings.getLongRsi());
     }
 }

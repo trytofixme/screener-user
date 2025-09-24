@@ -1,4 +1,4 @@
-package ru.screener.user.integrations.telegram.request;
+package ru.screener.user.dto.telegram.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

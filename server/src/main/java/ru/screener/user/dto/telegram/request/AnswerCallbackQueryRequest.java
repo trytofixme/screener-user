@@ -1,4 +1,4 @@
-package ru.screener.user.integrations.telegram.request;
+package ru.screener.user.dto.telegram.request;
 
 public record AnswerCallbackQueryRequest(String callback_query_id,
                                          String text,

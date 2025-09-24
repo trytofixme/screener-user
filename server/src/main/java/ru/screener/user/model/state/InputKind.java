@@ -1,4 +1,4 @@
-package ru.screener.user.entity.state;
+package ru.screener.user.model.state;
 
 public enum InputKind {
 

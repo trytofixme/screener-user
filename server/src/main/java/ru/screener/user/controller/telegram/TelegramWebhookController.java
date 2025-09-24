@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
-import ru.screener.user.dto.telegram.TelegramUpdate;
+import ru.screener.user.dto.telegram.webhook.TelegramUpdate;
 import ru.screener.user.facade.request.ReactiveRequestDispatcher;
 
 @Slf4j

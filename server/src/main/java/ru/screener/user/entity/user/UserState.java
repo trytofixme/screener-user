@@ -1,4 +1,4 @@
-package ru.screener.user.entity.state;
+package ru.screener.user.entity.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +17,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
-import ru.screener.user.entity.user.AppUser;
+import ru.screener.user.model.state.State;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,7 +37,7 @@ public class UserState {
 
     @OneToOne(optional = false)
     @JoinColumn(name = "user_id", unique = true)
-    private AppUser user;
+    private TelegramUser user;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

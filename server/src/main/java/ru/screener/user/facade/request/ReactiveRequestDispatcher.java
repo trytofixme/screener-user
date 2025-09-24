@@ -9,7 +9,7 @@ import reactor.core.Disposable;
 import reactor.core.publisher.BufferOverflowStrategy;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
-import ru.screener.user.dto.telegram.TelegramUpdate;
+import ru.screener.user.dto.telegram.webhook.TelegramUpdate;
 import ru.screener.user.service.deduplication.DeduplicationService;
 import ru.screener.user.utils.telegram.TelegramUpdateUtils;
 
@@ -36,9 +36,6 @@ public class ReactiveRequestDispatcher {
     public void init() {
         this.subscription = sink.asFlux()
                 .filter(Objects::nonNull)
-                .onBackpressureBuffer(10_000,
-                        d -> log.warn("Backpressure: dropped update {}", d),
-                        BufferOverflowStrategy.DROP_OLDEST)
                 .filterWhen(upd -> deduplicationService.firstTime(upd.getUpdateId())
                         .timeout(Duration.ofSeconds(2))
                         .onErrorReturn(false))

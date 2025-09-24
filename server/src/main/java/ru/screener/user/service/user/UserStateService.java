@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.screener.user.entity.state.State;
-import ru.screener.user.entity.state.UserState;
-import ru.screener.user.entity.user.AppUser;
+import ru.screener.user.model.state.State;
+import ru.screener.user.entity.user.UserState;
+import ru.screener.user.entity.user.TelegramUser;
 import ru.screener.user.repository.user.UserStateRepository;
 
 @Slf4j
@@ -17,7 +17,7 @@ public class UserStateService {
     private final UserStateRepository repository;
 
     @Transactional
-    public void setState(AppUser user, State state) {
+    public void setState(TelegramUser user, State state) {
         UserState userState = repository.findByUser(user).orElseGet(() -> {
             UserState newState = new UserState();
             newState.setUser(user);
@@ -31,7 +31,7 @@ public class UserStateService {
     }
 
     @Transactional(readOnly = true)
-    public State getState(AppUser user) {
+    public State getState(TelegramUser user) {
         return repository.findByUser(user)
                 .map(UserState::getState)
                 .orElse(State.NONE);

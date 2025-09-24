@@ -17,7 +17,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
-import ru.screener.user.entity.user.AppUser;
+import ru.screener.user.entity.user.TelegramUser;
+import ru.screener.user.model.settings.TimeFrame;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,17 +39,19 @@ public class RsiSettings {
 
     @OneToOne(optional = false)
     @JoinColumn(name = "user_id", unique = true)
-    private AppUser user;
+    private TelegramUser user;
 
     @Column(name = "short_time_frame")
     @Enumerated(EnumType.STRING)
     private TimeFrame shortTimeFrame;
+
     @Column(name = "long_time_frame")
     @Enumerated(EnumType.STRING)
     private TimeFrame longTimeFrame;
 
     @Column(name = "short_rsi", precision = 10, scale = 5)
     private BigDecimal shortRsi;
+
     @Column(name = "long_rsi", precision = 10, scale = 5)
     private BigDecimal longRsi;
 

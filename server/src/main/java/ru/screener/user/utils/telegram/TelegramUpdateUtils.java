@@ -1,8 +1,8 @@
 package ru.screener.user.utils.telegram;
 
 import lombok.experimental.UtilityClass;
-import ru.screener.user.dto.telegram.Message;
-import ru.screener.user.dto.telegram.TelegramUpdate;
+import ru.screener.user.dto.telegram.webhook.Message;
+import ru.screener.user.dto.telegram.webhook.TelegramUpdate;
 
 @UtilityClass
 public final class TelegramUpdateUtils {

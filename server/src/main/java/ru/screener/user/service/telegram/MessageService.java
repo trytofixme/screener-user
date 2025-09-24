@@ -5,19 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import ru.screener.user.dto.telegram.Chat;
-import ru.screener.user.dto.telegram.From;
-import ru.screener.user.dto.telegram.Message;
-import ru.screener.user.entity.settings.TimeFrame;
-import ru.screener.user.entity.state.State;
-import ru.screener.user.entity.user.AppUser;
+import ru.screener.user.dto.telegram.webhook.Chat;
+import ru.screener.user.dto.telegram.webhook.From;
+import ru.screener.user.dto.telegram.webhook.Message;
+import ru.screener.user.model.settings.TimeFrame;
+import ru.screener.user.model.state.State;
+import ru.screener.user.entity.user.TelegramUser;
 import ru.screener.user.integrations.telegram.TelegramClient;
-import ru.screener.user.integrations.telegram.request.SendMessageRequest;
+import ru.screener.user.dto.telegram.request.SendMessageRequest;
 import ru.screener.user.service.settings.RsiSettingsService;
-import ru.screener.user.service.telegram.request.RequestBuilder;
+import ru.screener.user.builder.request.send.SendMessageRequestBuilder;
 import ru.screener.user.service.user.UserService;
 import ru.screener.user.service.user.UserStateService;
-import ru.screener.user.utils.keyboard.KeyboardButtons;
+import ru.screener.user.builder.keyboard.KeyboardButtonsText;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -33,11 +33,11 @@ public class MessageService {
     private final UserService userService;
     private final UserStateService userStateService;
     private final RsiSettingsService rsiSettingsService;
-    private final RequestBuilder requestBuilder;
+    private final SendMessageRequestBuilder requestBuilder;
     private final TelegramClient telegramClient;
     private final CommandService commandService;
 
-    public Mono<Void> handleMessage(Message message) {
+    public Mono<Void> handleMessage(final Message message) {
         return Mono.defer(() -> {
                     final String messageText = message.getText();
                     if (messageText == null) {
@@ -49,8 +49,8 @@ public class MessageService {
 
                     // upsert user + read state
                     return Mono.fromCallable(() -> {
-                                AppUser user = upsertUser(message);
-                                State state = userStateService.getState(user);
+                                final TelegramUser user = upsertUser(message);
+                                final State state = userStateService.getState(user);
                                 return new UserCtx(user, state, messageText);
                             })
                             .subscribeOn(Schedulers.boundedElastic())
@@ -60,6 +60,7 @@ public class MessageService {
                                 if (ctx.messageText().startsWith("/")) {
                                     return commandService.handleCommand(ctx.user(), ctx.messageText());
                                 }
+
                                 return Mono.just(ctx);
                             })
 
@@ -87,7 +88,7 @@ public class MessageService {
                 });
     }
 
-    private AppUser upsertUser(Message message) {
+    private TelegramUser upsertUser(Message message) {
         From from = Objects.requireNonNull(message.getFrom(), "from is null");
         Chat chat = Objects.requireNonNull(message.getChat(), "chat is null");
         return userService.upsertFromTelegram(
@@ -96,24 +97,24 @@ public class MessageService {
         );
     }
 
-    private SendMessageRequest resolveMessageRequest(String messageText, AppUser user) {
+    private SendMessageRequest resolveMessageRequest(String messageText, TelegramUser user) {
         return switch (messageText) {
-            case KeyboardButtons.BACK_TO_MENU_COMMAND -> requestBuilder.getMainMenuRequest(user);
-            case KeyboardButtons.SETTINGS_COMMAND -> requestBuilder.getSettingsRequest(user);
-            case KeyboardButtons.PROFILE_COMMAND -> requestBuilder.getProfileRequest(user);
-            case KeyboardButtons.SHORT_TIME_FRAME_COMMAND -> {
+            case KeyboardButtonsText.BACK_TO_MENU_COMMAND -> requestBuilder.getMainMenuRequest(user);
+            case KeyboardButtonsText.SETTINGS_COMMAND -> requestBuilder.getSettingsRequest(user);
+            case KeyboardButtonsText.PROFILE_COMMAND -> requestBuilder.getProfileRequest(user);
+            case KeyboardButtonsText.SHORT_TIME_FRAME_COMMAND -> {
                 userStateService.setState(user, State.WAIT_TIME_FRAME_SHORT);
                 yield requestBuilder.getTimeFramesRequest(user);
             }
-            case KeyboardButtons.LONG_TIME_FRAME_COMMAND -> {
+            case KeyboardButtonsText.LONG_TIME_FRAME_COMMAND -> {
                 userStateService.setState(user, State.WAIT_TIME_FRAME_LONG);
                 yield requestBuilder.getTimeFramesRequest(user);
             }
-            case KeyboardButtons.SHORT_RSI_VALUE_COMMAND -> {
+            case KeyboardButtonsText.SHORT_RSI_VALUE_COMMAND -> {
                 userStateService.setState(user, State.WAIT_RSI_SHORT);
                 yield requestBuilder.getRsiValueRequest(user);
             }
-            case KeyboardButtons.LONG_RSI_VALUE_COMMAND -> {
+            case KeyboardButtonsText.LONG_RSI_VALUE_COMMAND -> {
                 userStateService.setState(user, State.WAIT_RSI_LONG);
                 yield requestBuilder.getRsiValueRequest(user);
             }
@@ -121,14 +122,13 @@ public class MessageService {
         };
     }
 
-    private Mono<Void> tryApplyNumericInput(AppUser user, State state, String messageText) {
+    private Mono<Void> tryApplyNumericInput(TelegramUser user, State state, String messageText) {
         return Mono.fromCallable(() -> {
                     if (state.name().contains(TIME_FRAME_STRING)) {
-                        final TimeFrame tf = TimeFrame.fromString(messageText);
-                        if (tf == null) throw new IllegalArgumentException("Неверный таймфрейм");
+                        final TimeFrame timeFrame = TimeFrame.fromString(messageText);
                         switch (state) {
-                            case WAIT_TIME_FRAME_SHORT -> rsiSettingsService.updateTimeFrames(user, tf, null);
-                            case WAIT_TIME_FRAME_LONG -> rsiSettingsService.updateTimeFrames(user, null, tf);
+                            case WAIT_TIME_FRAME_SHORT -> rsiSettingsService.updateTimeFrames(user, timeFrame, null);
+                            case WAIT_TIME_FRAME_LONG -> rsiSettingsService.updateTimeFrames(user, null, timeFrame);
                         }
                     } else if (state.name().contains(RSI_STRING)) {
                         final BigDecimal rsi = new BigDecimal(messageText);
@@ -159,5 +159,5 @@ public class MessageService {
                 .then();
     }
 
-    private record UserCtx(AppUser user, State state, String messageText) {}
+    private record UserCtx(TelegramUser user, State state, String messageText) {}
 }

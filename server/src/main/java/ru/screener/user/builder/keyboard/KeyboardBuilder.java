@@ -1,95 +1,99 @@
-package ru.screener.user.utils.keyboard;
+package ru.screener.user.builder.keyboard;
 
-import lombok.experimental.UtilityClass;
-import ru.screener.user.dto.keyboard.Keyboard;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import ru.screener.user.dto.telegram.keyboard.KeyboardDto;
 
 import java.util.List;
 
-import static ru.screener.user.entity.settings.TimeFrame.FIFTEEN_MINUTES;
-import static ru.screener.user.entity.settings.TimeFrame.FOUR_HOURS;
-import static ru.screener.user.entity.settings.TimeFrame.ONE_DAY;
-import static ru.screener.user.entity.settings.TimeFrame.ONE_HOUR;
-import static ru.screener.user.utils.keyboard.KeyboardButtons.ACCESS_COMMAND;
-import static ru.screener.user.utils.keyboard.KeyboardButtons.BACK_TO_MENU_COMMAND;
-import static ru.screener.user.utils.keyboard.KeyboardButtons.LONG_RSI_VALUE_COMMAND;
-import static ru.screener.user.utils.keyboard.KeyboardButtons.LONG_TIME_FRAME_COMMAND;
-import static ru.screener.user.utils.keyboard.KeyboardButtons.PROFILE_COMMAND;
-import static ru.screener.user.utils.keyboard.KeyboardButtons.SETTINGS_COMMAND;
-import static ru.screener.user.utils.keyboard.KeyboardButtons.SHORT_RSI_VALUE_COMMAND;
-import static ru.screener.user.utils.keyboard.KeyboardButtons.SHORT_TIME_FRAME_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.ACCESS_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.BACK_TO_MENU_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.LONG_RSI_VALUE_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.LONG_TIME_FRAME_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.PROFILE_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.SETTINGS_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.SHORT_RSI_VALUE_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.SHORT_TIME_FRAME_COMMAND;
+import static ru.screener.user.model.settings.TimeFrame.FIFTEEN_MINUTES;
+import static ru.screener.user.model.settings.TimeFrame.FOUR_HOURS;
+import static ru.screener.user.model.settings.TimeFrame.ONE_DAY;
+import static ru.screener.user.model.settings.TimeFrame.ONE_HOUR;
 
-@UtilityClass
-public final class Keyboards {
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class KeyboardBuilder {
 
-    public static Keyboard defaultKeyboard() {
-        return new Keyboard()
+    public KeyboardDto defaultKeyboard() {
+        return new KeyboardDto()
                 .setKeyboard(List.of(List.of(
-                        new Keyboard.KeyboardButton()
+                        new KeyboardDto.KeyboardButton()
                                 .setText(ACCESS_COMMAND),
-                        new Keyboard.KeyboardButton()
+                        new KeyboardDto.KeyboardButton()
                                 .setText(PROFILE_COMMAND)
                 )))
                 .setResizeKeyboard(true)
                 .setOneTimeKeyboard(false);
     }
 
-    public static Keyboard mainKeyboard() {
-        return new Keyboard()
+    public KeyboardDto mainKeyboard() {
+        return new KeyboardDto()
                 .setKeyboard(List.of(
                         List.of(
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(SETTINGS_COMMAND)
                         ),
                         List.of(
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(ACCESS_COMMAND),
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(PROFILE_COMMAND)
                 )))
                 .setResizeKeyboard(true)
                 .setOneTimeKeyboard(false);
     }
 
-    public static Keyboard settingsKeyboard() {
-        return new Keyboard()
+    public KeyboardDto settingsKeyboard() {
+        return new KeyboardDto()
                 .setKeyboard(List.of(
                         List.of(
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(SHORT_TIME_FRAME_COMMAND),
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(LONG_TIME_FRAME_COMMAND)
                         ),
                         List.of(
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(SHORT_RSI_VALUE_COMMAND),
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(LONG_RSI_VALUE_COMMAND)
                         ),
                         List.of(
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(BACK_TO_MENU_COMMAND)
                         )))
                 .setResizeKeyboard(true)
                 .setOneTimeKeyboard(true);
     }
 
-    public static Keyboard timeFramesKeyboard() {
-        return new Keyboard()
+    public KeyboardDto timeFramesKeyboard() {
+        return new KeyboardDto()
                 .setKeyboard(List.of(
                         List.of(
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(FIFTEEN_MINUTES.getTranslation()),
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(ONE_HOUR.getTranslation())
                         ),
                         List.of(
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(FOUR_HOURS.getTranslation()),
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(ONE_DAY.getTranslation())
                         ),
                         List.of(
-                                new Keyboard.KeyboardButton()
+                                new KeyboardDto.KeyboardButton()
                                         .setText(BACK_TO_MENU_COMMAND)
                         )))
                 .setResizeKeyboard(true)

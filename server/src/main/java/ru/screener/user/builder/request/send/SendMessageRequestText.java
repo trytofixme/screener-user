@@ -1,6 +1,6 @@
-package ru.screener.user.service.telegram.request;
+package ru.screener.user.builder.request.send;
 
-public class RequestText {
+public class SendMessageRequestText {
 
     public static final String START_MESSAGE = "Приветствую!";
     public static final String MAIN_MENU_MESSAGE = "Главное меню:";

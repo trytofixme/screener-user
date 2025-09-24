@@ -1,10 +1,10 @@
-package ru.screener.user.integrations.telegram.request;
+package ru.screener.user.dto.telegram.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import ru.screener.user.dto.keyboard.Keyboard;
+import ru.screener.user.dto.telegram.keyboard.KeyboardDto;
 
 import java.io.Serializable;
 
@@ -20,7 +20,7 @@ public class SendMessageRequest implements Serializable {
     private String text;
 
     @JsonProperty("reply_markup")
-    private Keyboard replyMarkup;
+    private KeyboardDto replyMarkup;
 
     @JsonProperty("parse_mode")
     private String parseMode = "Markdown";

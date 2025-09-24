@@ -18,7 +18,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.screener.user.entity.user.AppUser;
+import ru.screener.user.entity.user.TelegramUser;
+import ru.screener.user.model.subscription.SubscriptionPlan;
+import ru.screener.user.model.subscription.SubscriptionStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,7 +45,7 @@ public class Subscription {
 
     @OneToOne(optional = false)
     @JoinColumn(name = "user_id", unique = true)
-    private AppUser user;
+    private TelegramUser user;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)

@@ -1,4 +1,4 @@
-package ru.screener.user.dto.telegram;
+package ru.screener.user.dto.telegram.webhook;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

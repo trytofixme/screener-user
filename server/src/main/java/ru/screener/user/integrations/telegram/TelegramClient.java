@@ -3,15 +3,12 @@ package ru.screener.user.integrations.telegram;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
-import ru.screener.user.integrations.telegram.request.AnswerCallbackQueryRequest;
-import ru.screener.user.integrations.telegram.request.EditMessageTextRequest;
-import ru.screener.user.integrations.telegram.request.SendMessageRequest;
+import ru.screener.user.dto.telegram.request.SendMessageRequest;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
@@ -22,8 +19,8 @@ import java.time.Duration;
 public class TelegramClient {
 
     private static final String SEND_MESSAGE_METHOD = "sendMessage";
-    private static final String ANSWER_CALLBACK_METHOD = "answerCallbackQuery";
-    private static final String EDIT_MESSAGE_METHOD = "editMessageText";
+//    private static final String ANSWER_CALLBACK_METHOD = "answerCallbackQuery";
+//    private static final String EDIT_MESSAGE_METHOD = "editMessageText";
 
     private final WebClient webClient = WebClient.builder().build();
 
@@ -52,33 +49,33 @@ public class TelegramClient {
                 });
     }
 
-    public void answerCallback(AnswerCallbackQueryRequest request) {
-        webClient.post().uri(url(ANSWER_CALLBACK_METHOD))
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(request)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, resp ->
-                        resp.bodyToMono(String.class).flatMap(body -> {
-                            log.error("Telegram sendMessage error {}: {}", resp.statusCode(), body);
-                            return Mono.error(new RuntimeException("Telegram error: " + body));
-                        })
-                )
-                .bodyToMono(String.class)
-                .block();
-    }
-
-    public void editMessage(EditMessageTextRequest request) {
-        webClient.post().uri(url(EDIT_MESSAGE_METHOD))
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(request)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, resp ->
-                        resp.bodyToMono(String.class).flatMap(body -> {
-                            log.error("Telegram sendMessage error {}: {}", resp.statusCode(), body);
-                            return Mono.error(new RuntimeException("Telegram error: " + body));
-                        })
-                )
-                .bodyToMono(String.class)
-                .block();
-    }
+//    public void answerCallback(AnswerCallbackQueryRequest request) {
+//        webClient.post().uri(url(ANSWER_CALLBACK_METHOD))
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .bodyValue(request)
+//                .retrieve()
+//                .onStatus(HttpStatusCode::isError, resp ->
+//                        resp.bodyToMono(String.class).flatMap(body -> {
+//                            log.error("Telegram sendMessage error {}: {}", resp.statusCode(), body);
+//                            return Mono.error(new RuntimeException("Telegram error: " + body));
+//                        })
+//                )
+//                .bodyToMono(String.class)
+//                .block();
+//    }
+//
+//    public void editMessage(EditMessageTextRequest request) {
+//        webClient.post().uri(url(EDIT_MESSAGE_METHOD))
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .bodyValue(request)
+//                .retrieve()
+//                .onStatus(HttpStatusCode::isError, resp ->
+//                        resp.bodyToMono(String.class).flatMap(body -> {
+//                            log.error("Telegram sendMessage error {}: {}", resp.statusCode(), body);
+//                            return Mono.error(new RuntimeException("Telegram error: " + body));
+//                        })
+//                )
+//                .bodyToMono(String.class)
+//                .block();
+//    }
 }

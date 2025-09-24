@@ -11,8 +11,8 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import ru.screener.user.dto.settings.RsiSettingsDto;
 import ru.screener.user.entity.settings.RsiSettings;
-import ru.screener.user.entity.settings.TimeFrame;
-import ru.screener.user.entity.user.AppUser;
+import ru.screener.user.model.settings.TimeFrame;
+import ru.screener.user.entity.user.TelegramUser;
 import ru.screener.user.error.settings.RsiSettingsNotFoundException;
 import ru.screener.user.mapper.settings.RsiSettingsMapper;
 import ru.screener.user.publisher.settings.RsiSettingsPublisher;
@@ -33,12 +33,12 @@ public class RsiSettingsService {
     private final RsiSettingsRepository repository;
 
     @Transactional
-    public RsiSettings getOrCreateSettings(AppUser user) {
+    public RsiSettings getOrCreateSettings(TelegramUser user) {
         return repository.findByUser(user).orElseGet(() -> createDefaultSettings(user));
     }
 
     @Transactional
-    public RsiSettings createDefaultSettings(AppUser user) {
+    public RsiSettings createDefaultSettings(TelegramUser user) {
         RsiSettings settings = new RsiSettings();
         settings.setUser(user);
         // Default values:
@@ -61,7 +61,7 @@ public class RsiSettingsService {
     }
 
     @Transactional
-    public void updateTimeFrames(AppUser user, TimeFrame shortMin, TimeFrame longMin) {
+    public void updateTimeFrames(TelegramUser user, TimeFrame shortMin, TimeFrame longMin) {
         RsiSettings settings = repository.findByUser(user)
                 .orElseThrow(RsiSettingsNotFoundException::new);
 
@@ -79,7 +79,7 @@ public class RsiSettingsService {
     }
 
     @Transactional
-    public void updateShortRsi(AppUser user, BigDecimal shortRsi) {
+    public void updateShortRsi(TelegramUser user, BigDecimal shortRsi) {
         validateRsi(shortRsi);
 
         RsiSettings settings = repository.findByUser(user)
@@ -93,7 +93,7 @@ public class RsiSettingsService {
     }
 
     @Transactional
-    public void updateLongRsi(AppUser user, BigDecimal longRsi) {
+    public void updateLongRsi(TelegramUser user, BigDecimal longRsi) {
         validateRsi(longRsi);
 
         RsiSettings settings = repository.findByUser(user)

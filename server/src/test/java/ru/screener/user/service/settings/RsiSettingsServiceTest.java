@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.screener.user.dto.settings.RsiSettingsDto;
 import ru.screener.user.entity.settings.RsiSettings;
-import ru.screener.user.entity.settings.TimeFrame;
-import ru.screener.user.entity.user.AppUser;
+import ru.screener.user.model.settings.TimeFrame;
+import ru.screener.user.entity.user.TelegramUser;
 import ru.screener.user.mapper.settings.RsiSettingsMapper;
 import ru.screener.user.publisher.settings.RsiSettingsPublisher;
 import ru.screener.user.repository.settings.RsiSettingsRepository;
@@ -35,12 +35,12 @@ class RsiSettingsServiceTest {
     @InjectMocks
     private RsiSettingsService service;
 
-    private AppUser user;
+    private TelegramUser user;
     private RsiSettings settings;
 
     @BeforeEach
     void setUp() {
-        user = new AppUser();
+        user = new TelegramUser();
         user.setTgUserId(1L);
         user.setChatId(2L);
 
