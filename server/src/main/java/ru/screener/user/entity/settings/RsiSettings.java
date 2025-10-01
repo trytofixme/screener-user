@@ -55,6 +55,12 @@ public class RsiSettings {
     @Column(name = "long_rsi", precision = 10, scale = 5)
     private BigDecimal longRsi;
 
+    @Column(name = "short_dump", precision = 10, scale = 5)
+    private BigDecimal shortDump;
+
+    @Column(name = "long_dump", precision = 10, scale = 5)
+    private BigDecimal longDump;
+
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at", nullable = false)

@@ -9,6 +9,7 @@ import ru.screener.user.dto.telegram.webhook.Chat;
 import ru.screener.user.dto.telegram.webhook.From;
 import ru.screener.user.dto.telegram.webhook.Message;
 import ru.screener.user.model.settings.TimeFrame;
+import ru.screener.user.model.state.InputKind;
 import ru.screener.user.model.state.State;
 import ru.screener.user.entity.user.TelegramUser;
 import ru.screener.user.integrations.telegram.TelegramClient;
@@ -26,9 +27,6 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class MessageService {
-
-    private static final String TIME_FRAME_STRING = "TIME_FRAME";
-    private static final String RSI_STRING = "RSI";
 
     private final UserService userService;
     private final UserStateService userStateService;
@@ -118,19 +116,27 @@ public class MessageService {
                 userStateService.setState(user, State.WAIT_RSI_LONG);
                 yield requestBuilder.getRsiValueRequest(user);
             }
+            case KeyboardButtonsText.SHORT_DUMP_VALUE_COMMAND -> {
+                userStateService.setState(user, State.WAIT_SHORT_DUMP);
+                yield requestBuilder.getDumpValueRequest(user);
+            }
+            case KeyboardButtonsText.LONG_DUMP_VALUE_COMMAND -> {
+                userStateService.setState(user, State.WAIT_LONG_DUMP);
+                yield requestBuilder.getDumpValueRequest(user);
+            }
             default -> requestBuilder.getDefaultRequest(user);
         };
     }
 
     private Mono<Void> tryApplyNumericInput(TelegramUser user, State state, String messageText) {
         return Mono.fromCallable(() -> {
-                    if (state.name().contains(TIME_FRAME_STRING)) {
+                    if (state.name().contains(InputKind.TIME_FRAME.toString())) {
                         final TimeFrame timeFrame = TimeFrame.fromString(messageText);
                         switch (state) {
                             case WAIT_TIME_FRAME_SHORT -> rsiSettingsService.updateTimeFrames(user, timeFrame, null);
                             case WAIT_TIME_FRAME_LONG -> rsiSettingsService.updateTimeFrames(user, null, timeFrame);
                         }
-                    } else if (state.name().contains(RSI_STRING)) {
+                    } else if (state.name().contains(InputKind.RSI.toString())) {
                         final BigDecimal rsi = new BigDecimal(messageText);
                         if (rsi.scale() > 2) throw new IllegalArgumentException("Слишком много знаков после запятой");
                         if (rsi.compareTo(BigDecimal.ZERO) < 0 || rsi.compareTo(new BigDecimal("100")) > 0) {
@@ -139,6 +145,16 @@ public class MessageService {
                         switch (state) {
                             case WAIT_RSI_SHORT -> rsiSettingsService.updateShortRsi(user, rsi);
                             case WAIT_RSI_LONG -> rsiSettingsService.updateLongRsi(user, rsi);
+                        }
+                    } else if (state.name().contains(InputKind.DUMP.toString())) {
+                        final BigDecimal dump = new BigDecimal(messageText);
+                        if (dump.scale() > 2) throw new IllegalArgumentException("Слишком много знаков после запятой");
+                        if (dump.compareTo(BigDecimal.ZERO) < 0 || dump.compareTo(new BigDecimal("100")) > 0) {
+                            throw new IllegalArgumentException("Дамп должен быть в диапазоне 0..100");
+                        }
+                        switch (state) {
+                            case WAIT_SHORT_DUMP -> rsiSettingsService.updateShortDump(user, dump);
+                            case WAIT_LONG_DUMP -> rsiSettingsService.updateLongDump(user, dump);
                         }
                     } else {
                         // неизвестный state — просто игнор или лог

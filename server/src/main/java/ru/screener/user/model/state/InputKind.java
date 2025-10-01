@@ -4,5 +4,6 @@ public enum InputKind {
 
     NONE,
     TIME_FRAME,
-    RSI
+    RSI,
+    DUMP
 }

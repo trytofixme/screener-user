@@ -46,6 +46,8 @@ public class RsiSettingsService {
         settings.setLongTimeFrame(TimeFrame.FIFTEEN_MINUTES);
         settings.setShortRsi(BigDecimal.valueOf(80));
         settings.setLongRsi(BigDecimal.valueOf(20));
+        settings.setShortDump(BigDecimal.ONE);
+        settings.setLongDump(BigDecimal.ONE);
 
         RsiSettings saved = repository.save(settings);
         publishAfterCommit(saved);
@@ -106,8 +108,42 @@ public class RsiSettingsService {
         publishAfterCommit(updatedSettings);
     }
 
+    @Transactional
+    public void updateShortDump(TelegramUser user, BigDecimal dump) {
+        validateDump(dump);
+
+        RsiSettings settings = repository.findByUser(user)
+                .orElseThrow(RsiSettingsNotFoundException::new);
+
+        settings.setShortDump(dump);
+
+        RsiSettings updatedSettings = repository.save(settings);
+        log.info("{}", updatedSettings);
+        publishAfterCommit(updatedSettings);
+    }
+
+    @Transactional
+    public void updateLongDump(TelegramUser user, BigDecimal dump) {
+        validateDump(dump);
+
+        RsiSettings settings = repository.findByUser(user)
+                .orElseThrow(RsiSettingsNotFoundException::new);
+
+        settings.setLongDump(dump);
+
+        RsiSettings updatedSettings = repository.save(settings);
+        log.info("{}", updatedSettings);
+        publishAfterCommit(updatedSettings);
+    }
+
     private void validateRsi(BigDecimal rsiValue) {
         if (rsiValue == null || rsiValue.compareTo(RSI_MIN) < 0 || rsiValue.compareTo(RSI_MAX) > 0) {
+            throw new IllegalArgumentException("Значение RSI может быть от 0 до 100");
+        }
+    }
+
+    private void validateDump(BigDecimal dump) {
+        if (dump == null || dump.compareTo(RSI_MIN) < 0 || dump.compareTo(RSI_MAX) > 0) {
             throw new IllegalArgumentException("Значение RSI может быть от 0 до 100");
         }
     }
