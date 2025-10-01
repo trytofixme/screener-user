@@ -28,7 +28,6 @@ public class TelegramUser {
     @UuidGenerator
     private UUID id;
 
-    @Id
     @Column(name = "tg_user_id", nullable = false, unique = true)
     private Long tgUserId;
 
