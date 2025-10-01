@@ -46,8 +46,8 @@ public class SendMessageRequestBuilder {
                 🔴 *Шорт: RSI ≥ %s за %s*;
                 🟢 *Лонг: RSI ≤ %s за %s*.
                 
-                🔴 *Дамп шорт: Повторное уведомление при изменении RSI на %s*;
-                🟢 *Дамп лонг: Повторное уведомление при изменении RSI на %s*.
+                🔴 *Дамп шорт: при изменении RSI на %s*;
+                🟢 *Дамп лонг: при изменении RSI на %s*.
                 """,
                 SendMessageRequestText.RSI_HELP_MESSAGE,
                 SendMessageRequestText.DUMP_HELP_MESSAGE,
@@ -72,8 +72,8 @@ public class SendMessageRequestBuilder {
                 🔴 *Шорт: RSI ≥ %s за %s*;
                 🟢 *Лонг: RSI ≤ %s за %s*.
                 
-                🔴 *Дамп шорт: Повторное уведомление при изменении RSI на %s*;
-                🟢 *Дамп лонг: Повторное уведомление при изменении RSI на %s*.
+                🔴 *Дамп шорт: при изменении RSI на %s*;
+                🟢 *Дамп лонг: при изменении RSI на %s*.
                 """,
                 SendMessageRequestText.AFTER_UPDATE_SETTINGS_MESSAGE,
                 settings.getShortRsi(), settings.getShortTimeFrame().getTranslation(),

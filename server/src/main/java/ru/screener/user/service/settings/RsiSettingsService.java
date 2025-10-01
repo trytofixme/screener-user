@@ -46,8 +46,8 @@ public class RsiSettingsService {
         settings.setLongTimeFrame(TimeFrame.FIFTEEN_MINUTES);
         settings.setShortRsi(BigDecimal.valueOf(80));
         settings.setLongRsi(BigDecimal.valueOf(20));
-        settings.setShortDump(BigDecimal.ONE);
-        settings.setLongDump(BigDecimal.ONE);
+        settings.setShortDump(BigDecimal.TWO);
+        settings.setLongDump(BigDecimal.TWO);
 
         RsiSettings saved = repository.save(settings);
         publishAfterCommit(saved);

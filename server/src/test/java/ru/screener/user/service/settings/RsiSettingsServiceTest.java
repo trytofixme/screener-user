@@ -73,8 +73,8 @@ class RsiSettingsServiceTest {
         assertThat(result.getLongTimeFrame()).isEqualTo(TimeFrame.FIFTEEN_MINUTES);
         assertThat(result.getShortRsi()).isEqualTo(BigDecimal.valueOf(80));
         assertThat(result.getLongRsi()).isEqualTo(BigDecimal.valueOf(20));
-        assertThat(result.getShortDump()).isEqualTo(BigDecimal.ONE);
-        assertThat(result.getLongDump()).isEqualTo(BigDecimal.ONE);
+        assertThat(result.getShortDump()).isEqualTo(BigDecimal.TWO);
+        assertThat(result.getLongDump()).isEqualTo(BigDecimal.TWO);
         verify(repository).save(any(RsiSettings.class));
         verify(publisher).sendMessage(dto);
     }
