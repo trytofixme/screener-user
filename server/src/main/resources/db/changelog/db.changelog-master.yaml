@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changeset/002-subscriptions.sql
   - include:
       file: db/changelog/changeset/003-add-dump.sql
+  - include:
+      file: db/changelog/changeset/004-update-dump.sql
