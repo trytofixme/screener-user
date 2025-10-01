@@ -13,6 +13,8 @@ public class RsiSettingsMapper {
                 .setShortTimeFrame(rsiSettings.getShortTimeFrame() != null ? rsiSettings.getShortTimeFrame().getTranslation() : null)
                 .setLongTimeFrame(rsiSettings.getLongTimeFrame() != null ? rsiSettings.getLongTimeFrame().getTranslation() : null)
                 .setShortRsi(rsiSettings.getShortRsi())
-                .setLongRsi(rsiSettings.getLongRsi());
+                .setLongRsi(rsiSettings.getLongRsi())
+                .setShortDump(rsiSettings.getShortDump())
+                .setLongDump(rsiSettings.getLongDump());
     }
 }

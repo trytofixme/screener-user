@@ -6,7 +6,9 @@ public enum State {
     WAIT_TIME_FRAME_SHORT(InputKind.TIME_FRAME),
     WAIT_TIME_FRAME_LONG(InputKind.TIME_FRAME),
     WAIT_RSI_SHORT(InputKind.RSI),
-    WAIT_RSI_LONG(InputKind.RSI);
+    WAIT_RSI_LONG(InputKind.RSI),
+    WAIT_SHORT_DUMP(InputKind.DUMP),
+    WAIT_LONG_DUMP(InputKind.DUMP);
 
     final InputKind kind;
 

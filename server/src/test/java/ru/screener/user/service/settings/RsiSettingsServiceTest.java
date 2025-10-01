@@ -8,9 +8,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.screener.user.dto.settings.RsiSettingsDto;
 import ru.screener.user.entity.settings.RsiSettings;
-import ru.screener.user.model.settings.TimeFrame;
 import ru.screener.user.entity.user.TelegramUser;
 import ru.screener.user.mapper.settings.RsiSettingsMapper;
+import ru.screener.user.model.settings.TimeFrame;
 import ru.screener.user.publisher.settings.RsiSettingsPublisher;
 import ru.screener.user.repository.settings.RsiSettingsRepository;
 
@@ -20,7 +20,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RsiSettingsServiceTest {
@@ -71,6 +73,8 @@ class RsiSettingsServiceTest {
         assertThat(result.getLongTimeFrame()).isEqualTo(TimeFrame.FIFTEEN_MINUTES);
         assertThat(result.getShortRsi()).isEqualTo(BigDecimal.valueOf(80));
         assertThat(result.getLongRsi()).isEqualTo(BigDecimal.valueOf(20));
+        assertThat(result.getShortDump()).isEqualTo(BigDecimal.ONE);
+        assertThat(result.getLongDump()).isEqualTo(BigDecimal.ONE);
         verify(repository).save(any(RsiSettings.class));
         verify(publisher).sendMessage(dto);
     }

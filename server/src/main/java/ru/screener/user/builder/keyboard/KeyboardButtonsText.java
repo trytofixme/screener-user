@@ -12,6 +12,9 @@ public class KeyboardButtonsText {
 
     public static final String SHORT_TIME_FRAME_COMMAND = "🔴 Таймфрейм шорт";
     public static final String SHORT_RSI_VALUE_COMMAND = "🔴 RSI шорт";
+    public static final String SHORT_DUMP_VALUE_COMMAND = "🔴 Дамп шорт";
+
     public static final String LONG_TIME_FRAME_COMMAND = "🟢 Таймфрейм лонг";
     public static final String LONG_RSI_VALUE_COMMAND = "🟢 RSI лонг";
+    public static final String LONG_DUMP_VALUE_COMMAND = "🟢 Дамп лонг";
 }

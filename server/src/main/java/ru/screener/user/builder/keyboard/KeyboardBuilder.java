@@ -9,6 +9,8 @@ import java.util.List;
 
 import static ru.screener.user.builder.keyboard.KeyboardButtonsText.ACCESS_COMMAND;
 import static ru.screener.user.builder.keyboard.KeyboardButtonsText.BACK_TO_MENU_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.LONG_DUMP_VALUE_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.SHORT_DUMP_VALUE_COMMAND;
 import static ru.screener.user.builder.keyboard.KeyboardButtonsText.LONG_RSI_VALUE_COMMAND;
 import static ru.screener.user.builder.keyboard.KeyboardButtonsText.LONG_TIME_FRAME_COMMAND;
 import static ru.screener.user.builder.keyboard.KeyboardButtonsText.PROFILE_COMMAND;
@@ -68,6 +70,12 @@ public class KeyboardBuilder {
                                         .setText(SHORT_RSI_VALUE_COMMAND),
                                 new KeyboardDto.KeyboardButton()
                                         .setText(LONG_RSI_VALUE_COMMAND)
+                        ),
+                        List.of(
+                                new KeyboardDto.KeyboardButton()
+                                        .setText(SHORT_DUMP_VALUE_COMMAND),
+                                new KeyboardDto.KeyboardButton()
+                                        .setText(LONG_DUMP_VALUE_COMMAND)
                         ),
                         List.of(
                                 new KeyboardDto.KeyboardButton()

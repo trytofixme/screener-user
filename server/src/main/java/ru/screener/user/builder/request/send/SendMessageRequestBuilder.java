@@ -38,17 +38,23 @@ public class SendMessageRequestBuilder {
     public SendMessageRequest getSettingsRequest(TelegramUser user) {
         RsiSettings settings = rsiSettingsService.getOrCreateSettings(user);
         String messageText = String.format(
-            """
-            %s
-            %s
-            
-            🔴 Шорт: RSI ≥ %s за %s;
-            🟢 Лонг: RSI ≤ %s за %s.
-            """,
-            SendMessageRequestText.RSI_HELP_MESSAGE,
-            SendMessageRequestText.CURRENT_SETTINGS_MESSAGE,
-            settings.getShortRsi(), settings.getShortTimeFrame().getTranslation(),
-            settings.getLongRsi(), settings.getLongTimeFrame().getTranslation()
+                """
+                %s
+                %s
+                %s
+                
+                🔴 *Шорт: RSI ≥ %s за %s*;
+                🟢 *Лонг: RSI ≤ %s за %s*.
+                
+                🔴 *Дамп шорт: Повторное уведомление при изменении RSI на %s*;
+                🟢 *Дамп лонг: Повторное уведомление при изменении RSI на %s*.
+                """,
+                SendMessageRequestText.RSI_HELP_MESSAGE,
+                SendMessageRequestText.DUMP_HELP_MESSAGE,
+                SendMessageRequestText.CURRENT_SETTINGS_MESSAGE,
+                settings.getShortRsi(), settings.getShortTimeFrame().getTranslation(),
+                settings.getLongRsi(), settings.getLongTimeFrame().getTranslation(),
+                settings.getShortDump(), settings.getLongDump()
         );
 
         return new SendMessageRequest()
@@ -63,12 +69,16 @@ public class SendMessageRequestBuilder {
                 """
                 %s
                 
-                🔴 Шорт: RSI ≥ %s за %s;
-                🟢 Лонг: RSI ≤ %s за %s.
+                🔴 *Шорт: RSI ≥ %s за %s*;
+                🟢 *Лонг: RSI ≤ %s за %s*.
+                
+                🔴 *Дамп шорт: Повторное уведомление при изменении RSI на %s*;
+                🟢 *Дамп лонг: Повторное уведомление при изменении RSI на %s*.
                 """,
                 SendMessageRequestText.AFTER_UPDATE_SETTINGS_MESSAGE,
                 settings.getShortRsi(), settings.getShortTimeFrame().getTranslation(),
-                settings.getLongRsi(), settings.getLongTimeFrame().getTranslation()
+                settings.getLongRsi(), settings.getLongTimeFrame().getTranslation(),
+                settings.getShortDump(), settings.getLongDump()
         );
 
         return new SendMessageRequest()
@@ -88,6 +98,12 @@ public class SendMessageRequestBuilder {
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(SendMessageRequestText.RSI_VALUE_COMMAND_MESSAGE);
+    }
+
+    public SendMessageRequest getDumpValueRequest(TelegramUser user) {
+        return new SendMessageRequest()
+                .setChatId(user.getChatId())
+                .setText(SendMessageRequestText.DUMP_VALUE_COMMAND_MESSAGE);
     }
 
     public SendMessageRequest getErrorRequest(TelegramUser user) {
