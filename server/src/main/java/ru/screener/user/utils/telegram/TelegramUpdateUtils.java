@@ -4,6 +4,8 @@ import lombok.experimental.UtilityClass;
 import ru.screener.user.dto.telegram.webhook.Message;
 import ru.screener.user.dto.telegram.webhook.TelegramUpdate;
 
+import java.time.format.DateTimeFormatter;
+
 @UtilityClass
 public final class TelegramUpdateUtils {
 
@@ -31,5 +33,7 @@ public final class TelegramUpdateUtils {
         Long chatId = extractChatId(upd);
         return (chatId == null) ? "nochat" : "chat:" + chatId;
     }
+
+    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 }
 
