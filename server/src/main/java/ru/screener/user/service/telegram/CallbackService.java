@@ -22,7 +22,7 @@ public class CallbackService {
         throw new NotImplementedException();
     }
 
-    //    private void handleCallback(Map<String, Object> cb) {
+    //    private void handleCallback(Map<String, Object> cb) { сделать ссылку для Оплаты
 //        Map<String, Object> from = (Map<String, Object>) cb.get("from");
 //        Map<String, Object> msg = (Map<String, Object>) cb.get("message");
 //        String data = (String) cb.get("data");
@@ -40,7 +40,7 @@ public class CallbackService {
 //        switch (data) {
 //            case "EXCH_TOGGLE_BYBIT" -> {
 //                var e = userService.toggleBybit(user);
-//                telegramClient.editMessage(new EditMessageTextRequest(
+//                telegramClient.editMessage(new EditMessageTextRequest(                                                answerCallback
 //                        user.getChatId(), messageId,
 //                        exchangesText(), Keyboards.exchangesInline(e.isBybitEnabled(), e.isMoexEnabled()), PARSE));
 //            }

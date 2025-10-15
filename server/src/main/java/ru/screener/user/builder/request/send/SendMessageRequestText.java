@@ -22,4 +22,10 @@ public class SendMessageRequestText {
         🟢 *Прислать сигнал о дампе на лонге, если RSI монеты после сигнала изменился на значение X*.
         """;
 
+    public static final String GET_ACCESS_MESSAGE =
+        """
+        ✅ Выбери тариф и оплати удобным способом.
+        Доступ откроется автоматически в течение 1 минуты.
+        """;
+    public static final String ACCESS_PERMITTED = "Подписка уже оформлена";
 }

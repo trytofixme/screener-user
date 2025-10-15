@@ -18,21 +18,33 @@ public class SendMessageRequestBuilder {
     private final KeyboardBuilder keyboardBuilder;
 
     public SendMessageRequest getStartRequest(TelegramUser user) {
-        boolean haveSubscription = true;
+        boolean haveSubscription = false;
 
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(SendMessageRequestText.START_MESSAGE)
-                .setReplyMarkup(haveSubscription ? keyboardBuilder.mainKeyboard() : keyboardBuilder.defaultKeyboard());
+                .setKeyboard(haveSubscription ? keyboardBuilder.mainKeyboard() : keyboardBuilder.defaultKeyboard());
+    }
+
+    public SendMessageRequest getAccessRequest(TelegramUser user) {
+        boolean haveSubscription = false;
+
+        SendMessageRequest sendMessageRequest = new SendMessageRequest()
+                .setChatId(user.getChatId())
+                .setText(haveSubscription ? SendMessageRequestText.ACCESS_PERMITTED : SendMessageRequestText.GET_ACCESS_MESSAGE);
+        if (!haveSubscription) {
+            return sendMessageRequest.setInlineKeyboard(keyboardBuilder.accessInlineKeyboard());
+        }
+        return sendMessageRequest.setKeyboard(keyboardBuilder.defaultKeyboard());
     }
 
     public SendMessageRequest getMainMenuRequest(TelegramUser user) {
-        boolean haveSubscription = true;
+        boolean haveSubscription = false;
 
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(SendMessageRequestText.MAIN_MENU_MESSAGE)
-                .setReplyMarkup(haveSubscription ? keyboardBuilder.mainKeyboard() : keyboardBuilder.defaultKeyboard());
+                .setKeyboard(haveSubscription ? keyboardBuilder.mainKeyboard() : keyboardBuilder.defaultKeyboard());
     }
 
     public SendMessageRequest getSettingsRequest(TelegramUser user) {
@@ -60,7 +72,7 @@ public class SendMessageRequestBuilder {
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(messageText)
-                .setReplyMarkup(keyboardBuilder.settingsKeyboard());
+                .setKeyboard(keyboardBuilder.settingsKeyboard());
     }
 
     public SendMessageRequest getSettingsUpdatedRequest(TelegramUser user) {
@@ -84,14 +96,14 @@ public class SendMessageRequestBuilder {
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(messageText)
-                .setReplyMarkup(keyboardBuilder.settingsKeyboard());
+                .setKeyboard(keyboardBuilder.settingsKeyboard());
     }
 
     public SendMessageRequest getTimeFramesRequest(TelegramUser user) {
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(SendMessageRequestText.TIME_FRAME_COMMAND_MESSAGE)
-                .setReplyMarkup(keyboardBuilder.timeFramesKeyboard());
+                .setKeyboard(keyboardBuilder.timeFramesKeyboard());
     }
 
     public SendMessageRequest getRsiValueRequest(TelegramUser user) {
@@ -125,15 +137,6 @@ public class SendMessageRequestBuilder {
                 .setText(messageText)
                 .setParseMode(null);
     }
-//
-//    private void sendAccess(AppUser u) {
-//        String text = """
-//        ✅ Выбери тариф и оплати удобной криптовалютой (USDT, USDC, BTC, ETH).
-//        Доступ откроется автоматически в течение 1 минуты.""";
-//        telegramClient.sendMessage(new SendMessageRequest(u.getChatId(), text, Keyboards.accessInline(), PARSE, true));
-//    }
-//
-
 
     public SendMessageRequest getDefaultRequest(TelegramUser user) {
         return new SendMessageRequest()

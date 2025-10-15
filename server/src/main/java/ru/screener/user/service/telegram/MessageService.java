@@ -100,6 +100,8 @@ public class MessageService {
             case KeyboardButtonsText.BACK_TO_MENU_COMMAND -> requestBuilder.getMainMenuRequest(user);
             case KeyboardButtonsText.SETTINGS_COMMAND -> requestBuilder.getSettingsRequest(user);
             case KeyboardButtonsText.PROFILE_COMMAND -> requestBuilder.getProfileRequest(user);
+            case KeyboardButtonsText.ACCESS_COMMAND -> requestBuilder.getAccessRequest(user);
+
             case KeyboardButtonsText.SHORT_TIME_FRAME_COMMAND -> {
                 userStateService.setState(user, State.WAIT_TIME_FRAME_SHORT);
                 yield requestBuilder.getTimeFramesRequest(user);
