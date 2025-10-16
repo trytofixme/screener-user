@@ -1,13 +1,18 @@
 package ru.screener.user.service.telegram;
 
+import lombok.Lombok;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import ru.screener.user.dto.telegram.request.AnswerCallbackQueryRequest;
 import ru.screener.user.dto.telegram.webhook.CallbackQuery;
 import ru.screener.user.integrations.telegram.TelegramClient;
 import ru.screener.user.builder.request.send.SendMessageRequestBuilder;
+import ru.screener.user.service.user.UserService;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -16,10 +21,22 @@ public class CallbackService {
 
     private final SendMessageRequestBuilder messageBuilder;
     private final TelegramClient telegramClient;
+    private final Integer ChatId = 341289479;
 
     //TODO: Разобраться с подпиской
     public Mono<Void> handleCallback(CallbackQuery callbackQuery) {
-        throw new NotImplementedException();
+        AnswerCallbackQueryRequest answer = new AnswerCallbackQueryRequest()
+                .setChatId(ChatId)
+                .setTitle("Оплата")
+                .setDescription("ПЛАТИ СУКА")
+                .setPayload("хуй из жопы")
+                .setCurrency("RUB")
+                .setProviderToken("1744374395:TEST:49720cf5ccbe5ffc0a6a")
+                .setPrices(List.of(new AnswerCallbackQueryRequest
+                        .LabeledPrice()
+                        .setLabel("1 месяц")
+                        .setAmount(100)));
+        return telegramClient.answerCallback(answer);
     }
 
     //    private void handleCallback(Map<String, Object> cb) { сделать ссылку для Оплаты

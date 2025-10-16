@@ -12,6 +12,7 @@ import ru.screener.user.model.subscription.SubscriptionStatus;
 import ru.screener.user.service.settings.RsiSettingsService;
 import ru.screener.user.service.subscription.SubscriptionService;
 
+import static ru.screener.user.utils.telegram.TelegramUpdateUtils.TranslateSubscription;
 import static ru.screener.user.utils.telegram.TelegramUpdateUtils.formatter;
 
 @Slf4j
@@ -43,7 +44,7 @@ public class SendMessageRequestBuilder {
         if (!haveSubscription) {
             return sendMessageRequest
                     .setText(SendMessageRequestText.GET_ACCESS_MESSAGE)
-                    .setInlineKeyboard(keyboardBuilder.accessInlineKeyboard());
+                    .setInlineKeyboard(keyboardBuilder.accessInlineKeyboard(user));
         }
         return sendMessageRequest
                 .setText(SendMessageRequestText.ACCESS_PERMITTED)
@@ -148,8 +149,8 @@ public class SendMessageRequestBuilder {
         Доступ: до %s
         """,
                 user.getUsername(),
-                subscription.getPlan(),
-                subscription.getStatus(),
+                TranslateSubscription(subscription.getPlan()),
+                TranslateSubscription(subscription.getStatus()),
                 subscription.getExpiresAt().format(formatter));
 
         return new SendMessageRequest()

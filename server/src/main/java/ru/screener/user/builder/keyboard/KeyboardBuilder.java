@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.screener.user.dto.telegram.keyboard.InlineKeyboardDto;
 import ru.screener.user.dto.telegram.keyboard.KeyboardDto;
+import ru.screener.user.entity.user.TelegramUser;
 
 import java.util.List;
 
@@ -100,23 +101,26 @@ public class KeyboardBuilder {
                 .setOneTimeKeyboard(true);
     }
 
-    public InlineKeyboardDto accessInlineKeyboard() {
+    public InlineKeyboardDto accessInlineKeyboard(TelegramUser user) {
         return new InlineKeyboardDto()
                 .setKeyboard(List.of(
                         List.of(
                                 new InlineKeyboardDto.KeyboardButton()
                                         .setText(ACCESS_1_MONTH)
-                                        .setUrl(PAY_URL)
+                                        .setCallbackData(user.getUsername() + " is going to pay")
+                                        //.setUrl(PAY_URL)
                         ),
                         List.of(
                                 new InlineKeyboardDto.KeyboardButton()
                                         .setText(ACCESS_6_MONTHS)
-                                        .setUrl(PAY_URL)
+                                        .setCallbackData(user.getUsername() + " is going to pay")
+                                        //.setUrl(PAY_URL)
                         ),
                         List.of(
                                 new InlineKeyboardDto.KeyboardButton()
                                         .setText(ACCESS_1_YEAR)
-                                        .setUrl(PAY_URL)
+                                        .setCallbackData(user.getUsername() + " is going to pay")
+                                        //.setUrl(PAY_URL)
                         )
                 ));
     }

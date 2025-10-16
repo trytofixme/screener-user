@@ -18,6 +18,9 @@ public class InlineKeyboardDto implements Serializable {
     public static class KeyboardButton implements Serializable {
         private String text;
 
-        private String url;
+        @JsonProperty("callback_data")
+        private String callbackData;
+
+        //private String url;
     }
 }
