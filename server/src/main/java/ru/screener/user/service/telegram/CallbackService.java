@@ -41,7 +41,7 @@ public class CallbackService {
                 .setPrices(List.of(new SendInvoiceRequest.LabeledPrice()
                         .setLabel("1 месяц")
                         .setAmount(100)));
-        telegramClient.sendInvoice(request);
+        var result = telegramClient.sendInvoiceJson(request);
         return Mono.empty();
     }
 
