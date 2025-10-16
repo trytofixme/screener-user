@@ -3,17 +3,21 @@ package ru.screener.user.integrations.telegram;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import ru.screener.user.dto.telegram.request.AnswerCallbackQueryRequest;
+import ru.screener.user.dto.telegram.request.SendInvoiceRequest;
 import ru.screener.user.dto.telegram.request.SendMessageRequest;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -52,8 +56,38 @@ public class TelegramClient {
                 });
     }
 
-    public Mono<Void> answerCallback(AnswerCallbackQueryRequest request) {
+    public Mono<TgResponse<Map<String, Object>>> sendInvoice(SendInvoiceRequest request) {
         return webClient.post().uri(url(SEND_INVOICE_METHOD))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<TgResponse<Map<String, Object>>>() {})
+                .timeout(Duration.ofSeconds(6))
+                .retryWhen(Retry.backoff(3, Duration.ofMillis(300))
+                        .filter(ex -> ex instanceof WebClientRequestException))
+                .onErrorResume(ex -> {
+                    log.warn("answerCallback failed: {}", ex.toString(), ex);
+                    return Mono.empty();
+                });
+    }
+
+    public Mono<TgResponse<Map<String, Object>>> sendInvoice(MultiValueMap<String, String> request) {
+        return webClient.post().uri(url(SEND_INVOICE_METHOD))
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(BodyInserters.fromFormData(request))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<TgResponse<Map<String, Object>>>() {})
+                .timeout(Duration.ofSeconds(6))
+                .retryWhen(Retry.backoff(3, Duration.ofMillis(300))
+                        .filter(ex -> ex instanceof WebClientRequestException))
+                .onErrorResume(ex -> {
+                    log.warn("answerCallback failed: {}", ex.toString(), ex);
+                    return Mono.empty();
+                });
+    }
+
+    public Mono<Void> answerCallback(AnswerCallbackQueryRequest request) {
+        return webClient.post().uri(url(ANSWER_CALLBACK_METHOD))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
@@ -66,6 +100,8 @@ public class TelegramClient {
                     return Mono.empty();
                 });
     }
+
+    record TgResponse<T>(boolean ok, T result) {}
 //
 //    public void editMessage(EditMessageTextRequest request) {
 //        webClient.post().uri(url(EDIT_MESSAGE_METHOD))
