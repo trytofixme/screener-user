@@ -15,4 +15,6 @@ public class TelegramUpdate implements Serializable {
     private Message message;
     @JsonProperty("callback_query")
     private CallbackQuery callbackQuery;
+    @JsonProperty("pre_checkout_query")
+    private PreCheckoutQuery preCheckoutQuery;
 }
