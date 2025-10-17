@@ -40,7 +40,7 @@ logging:
     root: info
 
 telegram:
-  bot-token: 8410759213:AAHMQMTEt3RThPDTAXq_0JVb5XrHNUelgy4
+  bot-token: 8259880311:AAEFbqVlmglK6PG2TqqRyI0TCiz2IbDEqrs
   api-base-url: https://api.telegram.org
   webhook-secret: 58c5dd89-226e-4009-908e-b1873b1d4808
   timeout-ms: 15000
