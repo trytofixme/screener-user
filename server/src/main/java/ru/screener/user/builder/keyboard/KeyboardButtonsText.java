@@ -17,4 +17,9 @@ public class KeyboardButtonsText {
     public static final String LONG_TIME_FRAME_COMMAND = "🟢 Таймфрейм лонг";
     public static final String LONG_RSI_VALUE_COMMAND = "🟢 RSI лонг";
     public static final String LONG_DUMP_VALUE_COMMAND = "🟢 Дамп лонг";
+
+    //TODO: Move to InlineButtonsText
+    public static final String ACCESS_1_MONTH = "📄 Доступ на 1 месяц 999₽";
+    public static final String ACCESS_6_MONTHS = "📄 Доступ на 6 месяцев 1999₽";
+    public static final String ACCESS_1_YEAR = "📄 Доступ на 12 месяцев 2999₽";
 }

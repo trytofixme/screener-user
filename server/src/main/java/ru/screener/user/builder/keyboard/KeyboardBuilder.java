@@ -3,20 +3,13 @@ package ru.screener.user.builder.keyboard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.screener.user.dto.telegram.keyboard.InlineKeyboardDto;
 import ru.screener.user.dto.telegram.keyboard.KeyboardDto;
+import ru.screener.user.entity.user.TelegramUser;
 
 import java.util.List;
 
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.ACCESS_COMMAND;
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.BACK_TO_MENU_COMMAND;
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.LONG_DUMP_VALUE_COMMAND;
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.SHORT_DUMP_VALUE_COMMAND;
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.LONG_RSI_VALUE_COMMAND;
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.LONG_TIME_FRAME_COMMAND;
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.PROFILE_COMMAND;
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.SETTINGS_COMMAND;
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.SHORT_RSI_VALUE_COMMAND;
-import static ru.screener.user.builder.keyboard.KeyboardButtonsText.SHORT_TIME_FRAME_COMMAND;
+import static ru.screener.user.builder.keyboard.KeyboardButtonsText.*;
 import static ru.screener.user.model.settings.TimeFrame.FIFTEEN_MINUTES;
 import static ru.screener.user.model.settings.TimeFrame.FOUR_HOURS;
 import static ru.screener.user.model.settings.TimeFrame.ONE_DAY;
@@ -108,12 +101,24 @@ public class KeyboardBuilder {
                 .setOneTimeKeyboard(true);
     }
 
-//    public static Map<String, Object> accessInline() {
-//        return Map.of("inline_keyboard", List.of(
-//                List.of(Map.of("text","📄 Доступ на 1 месяц 100$","url","https://pay.example/1m")),
-//                List.of(Map.of("text","📄 Доступ на 6 месяцев 200$","url","https://pay.example/6m")),
-//                List.of(Map.of("text","📄 Доступ на 12 месяцев 290$","url","https://pay.example/12m")),
-//                List.of(Map.of("text","⬅ Назад","callback_data","BACK_MAIN"))
-//        ));
-//    }
+    public InlineKeyboardDto accessInlineKeyboard(TelegramUser user) {
+        return new InlineKeyboardDto()
+                .setKeyboard(List.of(
+                        List.of(
+                                new InlineKeyboardDto.KeyboardButton()
+                                        .setText(ACCESS_1_MONTH)
+                                        .setCallbackData(user.getUsername() + " is going to pay")
+                        ),
+                        List.of(
+                                new InlineKeyboardDto.KeyboardButton()
+                                        .setText(ACCESS_6_MONTHS)
+                                        .setCallbackData(user.getUsername() + " is going to pay")
+                        ),
+                        List.of(
+                                new InlineKeyboardDto.KeyboardButton()
+                                        .setText(ACCESS_1_YEAR)
+                                        .setCallbackData(user.getUsername() + " is going to pay")
+                        )
+                ));
+    }
 }

@@ -10,7 +10,6 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 public class KeyboardDto implements Serializable {
-
     private List<List<KeyboardButton>> keyboard;
 
     @JsonProperty("resize_keyboard")
@@ -22,7 +21,6 @@ public class KeyboardDto implements Serializable {
     @Data
     @Accessors(chain = true)
     public static class KeyboardButton implements Serializable {
-
         private String text;
     }
 }

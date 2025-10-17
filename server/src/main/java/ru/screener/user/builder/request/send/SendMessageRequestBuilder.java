@@ -115,25 +115,31 @@ public class SendMessageRequestBuilder {
     public SendMessageRequest getProfileRequest(TelegramUser user) {
         String until = "до 01.01.2030";
         String messageText = String.format(
-        """
-        Профиль пользователя: %s
-        Доступ: %s
-        """, user.getUsername(), until);
+                """
+                Профиль пользователя: %s
+                Доступ: %s
+                """, user.getUsername(), until);
 
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(messageText)
                 .setParseMode(null);
     }
-//
-//    private void sendAccess(AppUser u) {
-//        String text = """
-//        ✅ Выбери тариф и оплати удобной криптовалютой (USDT, USDC, BTC, ETH).
-//        Доступ откроется автоматически в течение 1 минуты.""";
-//        telegramClient.sendMessage(new SendMessageRequest(u.getChatId(), text, Keyboards.accessInline(), PARSE, true));
-//    }
-//
 
+    public SendMessageRequest getAccessRequest(TelegramUser user) {
+        boolean haveSubscription = false;
+
+        SendMessageRequest sendMessageRequest = new SendMessageRequest()
+                .setChatId(user.getChatId());
+        if (!haveSubscription) {
+            return sendMessageRequest
+                    .setText(SendMessageRequestText.GET_ACCESS_MESSAGE)
+                    .setReplyMarkup(keyboardBuilder.accessInlineKeyboard(user));
+        }
+        return sendMessageRequest
+                .setText(SendMessageRequestText.ACCESS_PERMITTED)
+                .setReplyMarkup(keyboardBuilder.mainKeyboard());
+    }
 
     public SendMessageRequest getDefaultRequest(TelegramUser user) {
         return new SendMessageRequest()
