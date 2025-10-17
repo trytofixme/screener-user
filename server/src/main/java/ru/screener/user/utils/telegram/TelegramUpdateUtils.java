@@ -40,6 +40,7 @@ public final class TelegramUpdateUtils {
 
     public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
 
+    //TODO: Чекнуть SubscriptionPlan.translate
     public static String TranslateSubscription(SubscriptionPlan plan)
     {
         return switch (plan) {

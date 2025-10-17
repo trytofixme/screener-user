@@ -6,14 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.screener.user.builder.keyboard.KeyboardBuilder;
 import ru.screener.user.dto.telegram.request.SendMessageRequest;
 import ru.screener.user.entity.settings.RsiSettings;
-import ru.screener.user.entity.subscription.Subscription;
 import ru.screener.user.entity.user.TelegramUser;
-import ru.screener.user.model.subscription.SubscriptionStatus;
 import ru.screener.user.service.settings.RsiSettingsService;
-import ru.screener.user.service.subscription.SubscriptionService;
-
-import static ru.screener.user.utils.telegram.TelegramUpdateUtils.TranslateSubscription;
-import static ru.screener.user.utils.telegram.TelegramUpdateUtils.formatter;
 
 @Slf4j
 @Service
@@ -22,43 +16,23 @@ public class SendMessageRequestBuilder {
 
     private final RsiSettingsService rsiSettingsService;
     private final KeyboardBuilder keyboardBuilder;
-    private final SubscriptionService subscriptionService;
 
     public SendMessageRequest getStartRequest(TelegramUser user) {
-        Subscription subscription = subscriptionService.getOrCreateSubscription(user);
-        boolean haveSubscription =  subscriptionService.CheckForActiveNotFreeSubscription(subscription);
+        boolean haveSubscription = true;
 
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(SendMessageRequestText.START_MESSAGE)
-                .setKeyboard(haveSubscription ?
-                        keyboardBuilder.mainKeyboard() : keyboardBuilder.defaultKeyboard());
-    }
-
-    public SendMessageRequest getAccessRequest(TelegramUser user) {
-        Subscription subscription = subscriptionService.getOrCreateSubscription(user);
-        boolean haveSubscription =  subscriptionService.CheckForActiveNotFreeSubscription(subscription);
-
-        SendMessageRequest sendMessageRequest = new SendMessageRequest()
-                .setChatId(user.getChatId());
-        if (!haveSubscription) {
-            return sendMessageRequest
-                    .setText(SendMessageRequestText.GET_ACCESS_MESSAGE)
-                    .setInlineKeyboard(keyboardBuilder.accessInlineKeyboard(user));
-        }
-        return sendMessageRequest
-                .setText(SendMessageRequestText.ACCESS_PERMITTED)
-                .setKeyboard(keyboardBuilder.mainKeyboard());
+                .setReplyMarkup(haveSubscription ? keyboardBuilder.mainKeyboard() : keyboardBuilder.defaultKeyboard());
     }
 
     public SendMessageRequest getMainMenuRequest(TelegramUser user) {
-        Subscription subscription = subscriptionService.getOrCreateSubscription(user);
-        boolean haveSubscription =  subscriptionService.CheckForActiveNotFreeSubscription(subscription);
+        boolean haveSubscription = true;
 
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(SendMessageRequestText.MAIN_MENU_MESSAGE)
-                .setKeyboard(haveSubscription ? keyboardBuilder.mainKeyboard() : keyboardBuilder.defaultKeyboard());
+                .setReplyMarkup(haveSubscription ? keyboardBuilder.mainKeyboard() : keyboardBuilder.defaultKeyboard());
     }
 
     public SendMessageRequest getSettingsRequest(TelegramUser user) {
@@ -86,7 +60,7 @@ public class SendMessageRequestBuilder {
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(messageText)
-                .setKeyboard(keyboardBuilder.settingsKeyboard());
+                .setReplyMarkup(keyboardBuilder.settingsKeyboard());
     }
 
     public SendMessageRequest getSettingsUpdatedRequest(TelegramUser user) {
@@ -110,14 +84,14 @@ public class SendMessageRequestBuilder {
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(messageText)
-                .setKeyboard(keyboardBuilder.settingsKeyboard());
+                .setReplyMarkup(keyboardBuilder.settingsKeyboard());
     }
 
     public SendMessageRequest getTimeFramesRequest(TelegramUser user) {
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(SendMessageRequestText.TIME_FRAME_COMMAND_MESSAGE)
-                .setKeyboard(keyboardBuilder.timeFramesKeyboard());
+                .setReplyMarkup(keyboardBuilder.timeFramesKeyboard());
     }
 
     public SendMessageRequest getRsiValueRequest(TelegramUser user) {
@@ -139,24 +113,32 @@ public class SendMessageRequestBuilder {
     }
 
     public SendMessageRequest getProfileRequest(TelegramUser user) {
-        Subscription subscription = subscriptionService.getOrCreateSubscription(user);
-
+        String until = "до 01.01.2030";
         String messageText = String.format(
-        """
-        Профиль пользователя: %s
-        Тип подписки: %s
-        Статус: %s
-        Доступ: до %s
-        """,
-                user.getUsername(),
-                TranslateSubscription(subscription.getPlan()),
-                TranslateSubscription(subscription.getStatus()),
-                subscription.getExpiresAt().format(formatter));
+                """
+                Профиль пользователя: %s
+                Доступ: %s
+                """, user.getUsername(), until);
 
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
                 .setText(messageText)
                 .setParseMode(null);
+    }
+
+    public SendMessageRequest getAccessRequest(TelegramUser user) {
+        boolean haveSubscription = false;
+
+        SendMessageRequest sendMessageRequest = new SendMessageRequest()
+                .setChatId(user.getChatId());
+        if (!haveSubscription) {
+            return sendMessageRequest
+                    .setText(SendMessageRequestText.GET_ACCESS_MESSAGE)
+                    .setReplyMarkup(keyboardBuilder.accessInlineKeyboard(user));
+        }
+        return sendMessageRequest
+                .setText(SendMessageRequestText.ACCESS_PERMITTED)
+                .setReplyMarkup(keyboardBuilder.mainKeyboard());
     }
 
     public SendMessageRequest getDefaultRequest(TelegramUser user) {

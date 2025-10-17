@@ -20,7 +20,5 @@ public class InlineKeyboardDto implements Serializable {
 
         @JsonProperty("callback_data")
         private String callbackData;
-
-        //private String url;
     }
 }

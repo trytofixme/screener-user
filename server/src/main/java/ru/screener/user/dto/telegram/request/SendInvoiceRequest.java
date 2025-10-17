@@ -11,7 +11,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class SendInvoiceRequest implements Serializable {
     @JsonProperty("chat_id")
-    public Integer chatId;
+    public Long chatId;
 
     public String title;
 

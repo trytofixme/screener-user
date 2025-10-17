@@ -108,19 +108,16 @@ public class KeyboardBuilder {
                                 new InlineKeyboardDto.KeyboardButton()
                                         .setText(ACCESS_1_MONTH)
                                         .setCallbackData(user.getUsername() + " is going to pay")
-                                        //.setUrl(PAY_URL)
                         ),
                         List.of(
                                 new InlineKeyboardDto.KeyboardButton()
                                         .setText(ACCESS_6_MONTHS)
                                         .setCallbackData(user.getUsername() + " is going to pay")
-                                        //.setUrl(PAY_URL)
                         ),
                         List.of(
                                 new InlineKeyboardDto.KeyboardButton()
                                         .setText(ACCESS_1_YEAR)
                                         .setCallbackData(user.getUsername() + " is going to pay")
-                                        //.setUrl(PAY_URL)
                         )
                 ));
     }

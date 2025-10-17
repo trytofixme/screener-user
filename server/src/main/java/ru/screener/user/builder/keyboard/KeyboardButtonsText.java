@@ -18,9 +18,8 @@ public class KeyboardButtonsText {
     public static final String LONG_RSI_VALUE_COMMAND = "🟢 RSI лонг";
     public static final String LONG_DUMP_VALUE_COMMAND = "🟢 Дамп лонг";
 
+    //TODO: Move to InlineButtonsText
     public static final String ACCESS_1_MONTH = "📄 Доступ на 1 месяц 100$";
     public static final String ACCESS_6_MONTHS = "📄 Доступ на 6 месяцев 200$";
     public static final String ACCESS_1_YEAR = "📄 Доступ на 12 месяцев 290$";
-
-    public static final String PAY_URL = "https://www.tinkoff.ru/rm/r_xFTeHKYjqg.LvhqjendNZ/nhVRQ61607";
 }
