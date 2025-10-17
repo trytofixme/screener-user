@@ -19,7 +19,7 @@ public class KeyboardButtonsText {
     public static final String LONG_DUMP_VALUE_COMMAND = "🟢 Дамп лонг";
 
     //TODO: Move to InlineButtonsText
-    public static final String ACCESS_1_MONTH = "📄 Доступ на 1 месяц 100$";
-    public static final String ACCESS_6_MONTHS = "📄 Доступ на 6 месяцев 200$";
-    public static final String ACCESS_1_YEAR = "📄 Доступ на 12 месяцев 290$";
+    public static final String ACCESS_1_MONTH = "📄 Доступ на 1 месяц 999₽";
+    public static final String ACCESS_6_MONTHS = "📄 Доступ на 6 месяцев 1999₽";
+    public static final String ACCESS_1_YEAR = "📄 Доступ на 12 месяцев 2999₽";
 }

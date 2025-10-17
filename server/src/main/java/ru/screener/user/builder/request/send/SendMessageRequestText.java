@@ -24,7 +24,8 @@ public class SendMessageRequestText {
 
     public static final String GET_ACCESS_MESSAGE =
         """
-        ✅ Выбери тариф и оплати удобным способом.
+        ✅ *Выбери тариф и оплати с помощью карты*.
+        
         Доступ откроется автоматически в течение 1 минуты.
         """;
     public static final String ACCESS_PERMITTED = "Подписка уже оформлена";

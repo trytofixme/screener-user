@@ -10,9 +10,9 @@ spring:
       client.dns.lookup: use_all_dns_ips
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5434/candlesdb
-    username: admin
-    password: admin123
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: user
+    password: password
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -40,7 +40,7 @@ logging:
     root: info
 
 telegram:
-  bot-token: 8276706177:AAHFWLZPfGW8oYMysqDgVheIKasfENdjr-c
+  bot-token: 8410759213:AAHMQMTEt3RThPDTAXq_0JVb5XrHNUelgy4
   api-base-url: https://api.telegram.org
   webhook-secret: 58c5dd89-226e-4009-908e-b1873b1d4808
   timeout-ms: 15000
