@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.screener.user.builder.keyboard.KeyboardBuilder;
+import ru.screener.user.builder.keyboard.inline.InlineKeyboardBuilder;
 import ru.screener.user.dto.telegram.request.SendMessageRequest;
 import ru.screener.user.entity.settings.RsiSettings;
 import ru.screener.user.entity.user.TelegramUser;
 import ru.screener.user.service.settings.RsiSettingsService;
+import ru.screener.user.service.subscription.SubscriptionService;
 
 @Slf4j
 @Service
@@ -16,9 +18,11 @@ public class SendMessageRequestBuilder {
 
     private final RsiSettingsService rsiSettingsService;
     private final KeyboardBuilder keyboardBuilder;
+    private final InlineKeyboardBuilder inlineKeyboardBuilder;
+    private final SubscriptionService subscriptionService;
 
     public SendMessageRequest getStartRequest(TelegramUser user) {
-        boolean haveSubscription = true;
+        boolean haveSubscription = subscriptionService.tryGetSubscription(user) != null;
 
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
@@ -27,7 +31,7 @@ public class SendMessageRequestBuilder {
     }
 
     public SendMessageRequest getMainMenuRequest(TelegramUser user) {
-        boolean haveSubscription = true;
+        boolean haveSubscription = subscriptionService.tryGetSubscription(user) != null;
 
         return new SendMessageRequest()
                 .setChatId(user.getChatId())
@@ -127,14 +131,14 @@ public class SendMessageRequestBuilder {
     }
 
     public SendMessageRequest getAccessRequest(TelegramUser user) {
-        boolean haveSubscription = false;
+        boolean haveSubscription = subscriptionService.tryGetSubscription(user) != null;
 
         SendMessageRequest sendMessageRequest = new SendMessageRequest()
                 .setChatId(user.getChatId());
         if (!haveSubscription) {
             return sendMessageRequest
                     .setText(SendMessageRequestText.GET_ACCESS_MESSAGE)
-                    .setReplyMarkup(keyboardBuilder.accessInlineKeyboard(user));
+                    .setReplyMarkup(inlineKeyboardBuilder.accessInlineKeyboard(user));
         }
         return sendMessageRequest
                 .setText(SendMessageRequestText.ACCESS_PERMITTED)

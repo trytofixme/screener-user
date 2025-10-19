@@ -4,9 +4,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -20,7 +22,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import ru.screener.user.entity.user.TelegramUser;
-import ru.screener.user.model.subscription.SubscriptionPlan;
 import ru.screener.user.model.subscription.SubscriptionStatus;
 
 import java.math.BigDecimal;
@@ -49,8 +50,8 @@ public class Subscription {
     @JoinColumn(name = "user_id", unique = true)
     private TelegramUser user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 16)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_plan_id", nullable = false)
     private SubscriptionPlan plan;
 
     @Enumerated(EnumType.STRING)
@@ -63,20 +64,11 @@ public class Subscription {
     @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 
-    @Column(name = "canceled_at")
-    private LocalDateTime canceledAt;
-
-    @Column(name = "auto_renew", nullable = false)
-    private boolean autoRenew;
-
     @Column(name = "price_amount", precision = 18, scale = 2)
     private BigDecimal priceAmount;
 
-    @Column(name = "price_currency", length = 16)
-    private String priceCurrency; // ex: "USD","EUR","RUB"
-
     @Column(name = "ext_provider", length = 32)
-    private String externalProvider; // ex: "yookassa"
+    private String externalProvider;
 
     @Column(name = "ext_subscription_id", length = 128)
     private String externalSubscriptionId;
