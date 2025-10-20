@@ -3,18 +3,18 @@ package ru.screener.user.model.subscription;
 import lombok.Getter;
 
 @Getter
-public enum SubscriptionPlan {
+public enum SubscriptionPlanType {
     FREE("Бесплатная"),
     PREMIUM("Премиум"),
     SUPER("Супер");
 
     private final String translation;
 
-    SubscriptionPlan(String translation) {
+    SubscriptionPlanType(String translation) {
         this.translation = translation;
     }
 
-    public static String translate(SubscriptionPlan subscriptionPlan) {
+    public static String translate(SubscriptionPlanType subscriptionPlan) {
         return subscriptionPlan.translation;
     }
 }

@@ -7,3 +7,7 @@ databaseChangeLog:
       file: db/changelog/changeset/003-add-dump.sql
   - include:
       file: db/changelog/changeset/004-update-dump.sql
+  - include:
+      file: db/changelog/changeset/005-added-subscriptions-plan.sql
+  - include:
+      file: db/changelog/changeset/006-update-subscriptions.sql
