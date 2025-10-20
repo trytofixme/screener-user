@@ -137,6 +137,7 @@ public class SendMessageRequestBuilder {
                 .setChatId(user.getChatId());
         if (!haveSubscription) {
             return sendMessageRequest
+                    .setParseMode("MarkdownV2")
                     .setText(SendMessageRequestText.GET_ACCESS_MESSAGE)
                     .setReplyMarkup(inlineKeyboardBuilder.accessInlineKeyboard(user));
         }
