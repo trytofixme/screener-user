@@ -2,8 +2,6 @@ package ru.screener.user.entity.subscription;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
@@ -22,7 +20,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 import ru.screener.user.entity.user.TelegramUser;
-import ru.screener.user.model.subscription.SubscriptionStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -53,10 +50,6 @@ public class Subscription {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_plan_id", nullable = false)
     private SubscriptionPlan plan;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 16)
-    private SubscriptionStatus status;
 
     @Column(name = "started_at", nullable = false)
     private LocalDateTime startedAt;
